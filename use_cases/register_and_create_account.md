@@ -9,7 +9,9 @@ Customer must have a client card number in order to create an account.
 4. The system asks customer to confirm details 
 5. Customer clicks confirm button.
 6. The system validates the customers entries
-7. The system creates the account
+7. The system creates the customer account
 ## Alternate Flow
+$ Invalid client card number:
+If the customer inputs the wrong client card number the system will display an error telling the customer "invalid card number"
 ## Postconditions
 
