@@ -17,8 +17,7 @@ If the customer inputs the wrong client card number the system will display an e
 - Weak Password:
 
 If the customers password strength is weak the system will give errors warning the customer to increase the strength of their password and won't let them proceed until the minimum password strength isn't met.
-
--Customer doesn't click confirm details:
+- Customer doesn't click confirm details:
 
 If the customer doesn't click the confirm details button they will have to redue step 3 and make sure they click confirm details or else they will keep looping on step 3.
 ### Postconditions
