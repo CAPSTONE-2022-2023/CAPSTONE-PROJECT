@@ -1,11 +1,12 @@
-## Registering and creating a customer account (done by Gaurav Saini)
+## Registering and creating a user account (done by Gaurav Saini)
 ### Actors(User)
+Customer with a client card number
 ### Pre-conditions
 User must have a client card number in order to create an account.
 ### Mainflow
 1. User clicks the register button
 2. The system loads a form for the user to fill with personal details
-3. user fills in their personal details
+3. User fills in their personal details
 4. The system asks user to confirm details 
 5. User clicks confirm button.
 6. The system validates the user entries
