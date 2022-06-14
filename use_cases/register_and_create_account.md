@@ -15,7 +15,8 @@ Customer must have a client card number in order to create an account.
 
 If the customer inputs the wrong client card number the system will display an error telling the customer "invalid card number" and will keep displaying until the valid client card number isn't provided
 - Weak Password
-If the customers password strength is weak the system will give errors warning the customer to increase the strenth of their password.
+
+If the customers password strength is weak the system will give errors warning the customer to increase the strenth of their password and won't let them proceed until the minimum password strength isn't met.
 
 
 ### Postconditions
