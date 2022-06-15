@@ -25,4 +25,4 @@ Perfect!
 ### Deliverables (4/5)
 - The first three are perfect
 - The fourth should have been broken down into two (-0.5)
-- There should be a tool to allow users to see past statements (-0.5)
+- There should be a tool to allow users to see past transactions (-0.5)
