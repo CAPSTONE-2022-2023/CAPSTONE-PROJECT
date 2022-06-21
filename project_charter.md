@@ -28,3 +28,23 @@ Matthew, Mohammad, and Gaurav are planning on developing their own bank website 
 2. Users are able to register and log in to an account.
 3. Users can transfer money to and from accounts.
 4. Users can create additional bank accounts and view account statements.
+
+## 5. Risks, Assumptions, and Constraints
+
+### 5.1 Risks
+- Group members may decide to drop out of the course in the near future.
+- When making transactions, the system may not round the amount properly, resulting in users transferring more or less money than intended.
+- Contracted services may go down, resulting in users being unable to transfer funds to another individual.
+- The website is temporarily down for an extended period of time due to hosting and domain maintenance.
+- Customers may have trouble navigating through the website due to complex UI/UX.
+
+### 5.2 Assumptions
+- Group members will stay throughout the entire course.
+- Group members will adhere to best practices and will communicate effectively with one another.
+- Contracted services used by our website continue to operate.
+- The world doesn’t blow up.
+
+### 5.3 Constraints
+- Unable to undo a transfer to another individual after 72 hours; a contract service is responsible for the transaction, therefore the bank itself cannot revert the transaction.
+
+
