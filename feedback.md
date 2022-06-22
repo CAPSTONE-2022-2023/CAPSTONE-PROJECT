@@ -26,3 +26,18 @@ Perfect!
 - The first three are perfect
 - The fourth should have been broken down into two (-0.5)
 - There should be a tool to allow users to see past transactions (-0.5)
+
+## Task 4
+
+### Risks, Assumptions, and Constraints (4/5)
+- First assumpiton is already covered by a risk -0.5
+- Even though it did make me laugh, remove last assumption
+- The constraint is not clear -0.5
+
+### README.md (5/5)
+All required changes properly implemented.
+
+### Use Cases
+- **Log in [by Mohammad Reza]** - Very good! (8/10) There should be a tool to reset passwords. Instead of relying on emails. Postcondition should mention that a session was created.
+- **Changing from Chequing to Savings Account (Gaurav Saini)** (4/10) It is not clear what this use case is talking about. The user is trasnferring money between accounts? The user is switching the view from one account to another? Or, is the user creating a new account? -4 There is a very large number of typos: chequings, there (instead of their), setting instead of settings, amongst others. -2  
+- **Create Bank Account [by Matthew Samun]** Perfect (10/10)
