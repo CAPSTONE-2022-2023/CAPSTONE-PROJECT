@@ -15,6 +15,7 @@ Customer already has a chequing account
 
 ### Alternate Flow
 * If process request is failed
+if the process request is failed the system will alert the customer that we were unable to process your request please try again at a later time or cantact the bank by phone
 
 ### Postconditions
 After the customer has changed from chequings account to savings the customer will on be able to view there account balance, view statements, transactions, etransfers etc...
