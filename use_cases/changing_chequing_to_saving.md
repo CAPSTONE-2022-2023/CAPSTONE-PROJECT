@@ -1,4 +1,4 @@
-## Changing from Chequing to Savings Account (done by Gaurav Saini)
+## Changing from Chequing to Savings Account (Gaurav Saini)
 ### Actors(User)
 User with a chequings account
 ### Pre-conditions
