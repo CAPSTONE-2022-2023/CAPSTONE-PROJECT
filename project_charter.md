@@ -3,7 +3,7 @@
 This project aims at creating a website for a bank and its customers. This will include a “Registration” page that allows customers to create a new account and a “Home” page that allows customers to log into the website. There will also be an “Account Details” page that will be shown after the customer logs in, showcasing the customer’s current bank accounts and respective balances. Furthermore, there will be an “Account Statements” page that shows all transactions made on a specific bank account. Finally, a “Transfers” page will allow the customer to deposit and withdraw money to and from accounts. 
 
 <b>Date of Creation:</b> May 23rd, 2022<br>
-<b>Last Revision:</b> June 13, 2022
+<b>Last Revision:</b> June 21st, 2022
 
 <b>Current Version:</b> 1.1
 
@@ -42,7 +42,6 @@ Matthew, Mohammad, and Gaurav are planning on developing their own bank website 
 - Group members will stay throughout the entire course.
 - Group members will adhere to best practices and will communicate effectively with one another.
 - Contracted services used by our website continue to operate.
-- The world doesn’t blow up.
 
 ### 5.3 Constraints
 - Unable to undo a transfer to another individual after 72 hours; a contract service is responsible for the transaction, therefore the bank itself cannot revert the transaction.
