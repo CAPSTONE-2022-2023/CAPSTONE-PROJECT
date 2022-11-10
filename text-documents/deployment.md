@@ -8,10 +8,10 @@
 
 - We will use GitHub Actions to automate the deployment of the code to the Heroku app. Any merges made to the main development branch will be automatically moved to the Heroku app.
 - All whitebox testing will be done in the local environment; all blackbox testing will be done on the production side (Heroku app).
-- We will also integrate GitHub with Heroku to automate the deployment process. We will be using [this link](https://devcenter.heroku.com/articles/github-integration) as a reference.
+- We will also integrate GitHub with Heroku to manually deploy the app through the terminal in Visual Studio Code. We will use this [link](https://devcenter.heroku.com/articles/git) as a reference.
 - Here are the following steps (in order) to setup Heroku with GitHub:
-  - Set up the Heroku app.
-  - Enable the GitHub integration in the Heroku app.
-  - Enable "Automatic Deploys" to connect the main branch to the Heroku app.
-  - Enable the "Wait for CI to pass before deploy" checkbox to make sure all tests are passed before deploying to Heroku app.
-  - Review the temporary Heroku test app.
+  - Push all local changes to GitHub repo.
+  - Create and setup Heroku app.
+  - Login to Heroku through Visual Studio Code terminal.
+  - Link Heroku to the GitHub repo using a command in the Visual Studio Code terminal.
+  - Manually push changes to Heroku app through a command in Visual Studio Code.
