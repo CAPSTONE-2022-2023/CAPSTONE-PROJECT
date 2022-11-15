@@ -15,7 +15,7 @@ const RegisterPage = () => {
 
 	return (
 		<div id="login-container">
-			<h1 className="title">Bank App</h1>
+			<h1 className="title">Create New Account</h1>
 			<form id="login" onSubmit={(e) => onSubmit(e)}>
 				<label htmlFor="username">Username: </label>
 				<input id="username" type="username" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />
