@@ -1,13 +1,11 @@
 import React from 'react';
-// import { Link } from "react-router-dom";
 
-export default function LogoutPage() 
-{
+const LogoutPage = () => {
 	return (
-
 		<div>
-			<h1>THIS IS THE LOGOUT ACCOUNT PAGE!</h1>
+			<h1>THIS IS THE My boi g-saini's ACCOUNT PAGE!</h1>
 		</div>
+	)
+};
 
-  	);
-}
+export default LogoutPage;
