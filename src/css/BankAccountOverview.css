@@ -2,14 +2,70 @@ body
 {
 	background-image: linear-gradient(to top, rgba(255,0,0,0), rgb(255, 115, 0, 1));
 	background-repeat: no-repeat;
+	padding: 5px;
 }
 
-#bank-account-container 
+/* All the divs in the BankAccountOverviewPage.js file use this as a foundation. */
+.bank-account-div, .bank-account-prefabs
 {
-	background-color: gray;
-	margin: auto;
-	height: 95vh;
-	width: 60vw;
+	margin: 0 auto;
 	border: 2px solid black;
 	border-radius: 3px;
-  }
+	padding: 15px;
+}
+
+/* The parent div that holds all the other divs.*/
+#bank-account-overview-container 
+{
+	background-color: white;
+	border: none;
+	height: 85vh;
+	width: 60vw;
+	padding: 15px;
+}
+
+#bank-account-user-info-top
+{
+	text-align: center;
+}
+
+/* All the buttons in the BankAccountOverviewPage.js file use this as a foundation. */
+.bank-account-buttons
+{
+	margin: 0 auto;
+}
+
+#bank-account-sign-out-button
+{
+	float: right;
+}
+
+#username-heading
+{
+	margin: auto;
+	display: inline-block;
+}
+
+.bank-account-prefabs
+{
+	display: flex;
+	padding: 5px;
+	justify-content: space-evenly;
+	align-items: center;
+	width:65%;
+}
+
+.bank-account-prefab-balance
+{
+	color:green;
+}
+
+.bank-account-balance-total-title, .bank-account-balance-total-amount
+{
+	display:inline-block;
+}
+
+.bank-account-create-new
+{
+	margin: 0 auto;
+}
