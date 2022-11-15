@@ -1,0 +1,15 @@
+body 
+{
+	background-image: linear-gradient(to top, rgba(255,0,0,0), rgb(255, 115, 0, 1));
+	background-repeat: no-repeat;
+}
+
+#bank-account-container 
+{
+	background-color: gray;
+	margin: auto;
+	height: 95vh;
+	width: 60vw;
+	border: 2px solid black;
+	border-radius: 3px;
+  }
