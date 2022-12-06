@@ -35,8 +35,8 @@ export default function AddBankAccountOverlay({open, onClose, accountAdded})
 				</label>
 
 				<br/><br/><br/>
-				<button className = "bank-account-buttons" id = "overlayButton-openAccount"onClick = {handleSubmit}> Open Account </button>
-				<button className = "bank-account-buttons" id = "overlayButton-exit" onClick = {onClose}> Exit </button>		
+				<button className = "bank-app-buttons" id = "overlayButton-openAccount"onClick = {handleSubmit}> Open Account </button>
+				<button className = "bank-app-buttons" id = "overlayButton-exit" onClick = {onClose}> Exit </button>		
 		</div>
 	</>	
 	
