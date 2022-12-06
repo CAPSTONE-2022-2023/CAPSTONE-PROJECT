@@ -1,6 +1,17 @@
 # Change Log
 All notable changes to the Bank App will be documented in this file.
- 
+
+## 0.2.0 [2022-12-05]
+
+### Features
+- Implemented the "Add Account" functionality. Users are now able to create one Everyday Chequings Account and one Personal Savings account. Each account has a default balance of $100. [[c980590]](https://github.com/CAPSTONE-2022-2023/Group_21/commit/c980590ac87249c1c62d6c7eba7ae5e3a4c81bd0)
+- Implemented "Login" functionality. Users are now able to login to the system using credentials. As of now, the default credentials are the following: [[bc9e679]](https://github.com/CAPSTONE-2022-2023/Group_21/commit/bc9e6793e46b0b8d629bf324d3ee0b2a4ff5c4e8)
+  - Username: BOB (case-sensitive)
+  - Password: 1234
+
+### Changes
+- Revamped all the UI for every page. [[61931eb]](https://github.com/CAPSTONE-2022-2023/Group_21/commit/61931eb735cb81894f1caafa5cfaff8f4b21a4bd)
+
 ## 0.1.0 [2022-11-14]
  
 ### Features
