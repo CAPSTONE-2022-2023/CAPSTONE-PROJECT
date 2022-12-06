@@ -1,6 +1,6 @@
 body 
 {
-	background-image: linear-gradient(to top, rgba(255,0,0,0), rgb(255, 115, 0, 1));
+	background-image: linear-gradient(to top, #ff000000, #ff7300);
 	background-repeat: no-repeat;
 	padding: 5px;
 }
@@ -12,6 +12,78 @@ body
 	border: 2px solid black;
 	border-radius: 3px;
 	padding: 15px;
+}
+
+.bank-account-prefabs
+{
+	display: flex;
+	padding: 5px;
+	justify-content: space-evenly;
+	align-items: center;
+	width:65%;
+}
+
+.hidden
+{
+	display: none;
+}
+
+.bank-account-balance-total-amount
+{
+	color:green;
+	display:inline-block;
+	position: relative;
+	left: 10px;
+}
+
+.bank-account-prefab-balance
+{
+	color:green;
+}
+
+.bank-account-balance-total-title
+{
+	display:inline-block;
+}
+
+.bank-account-create-new
+{
+	margin: 0 auto;
+}
+
+/* 	All the buttons in the BankAccountOverviewPage.js file use this as a foundation. 
+	Created by: Gumpack (Button #87) [https://getcssscan.com/css-buttons-examples]
+*/
+.bank-account-buttons
+{
+	margin: auto;
+  	padding: 15px 30px;
+	text-align: center;
+	text-transform: uppercase;
+	transition: 0.5s;
+	background-size: 200% auto;
+	color: white;
+	border-radius: 10px;
+	display: block;
+	border: 0px;
+	font-weight: 700;
+	box-shadow: 0px 0px 14px -7px #f09819;
+	background-image: linear-gradient(45deg, #FF512F 0%, #F09819  51%, #FF512F  100%);
+	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+}
+
+.bank-account-buttons:hover 
+{
+  background-position: right center;
+  color: #fff;
+  text-decoration: none;
+}
+
+.bank-account-buttons:active {
+  transform: scale(0.95);
 }
 
 /* The parent div that holds all the other divs.*/
@@ -29,14 +101,10 @@ body
 	text-align: center;
 }
 
-/* All the buttons in the BankAccountOverviewPage.js file use this as a foundation. */
-.bank-account-buttons
-{
-	margin: 0 auto;
-}
-
 #bank-account-sign-out-button
 {
+	position: relative;
+	top: -9px;
 	float: right;
 }
 
@@ -44,28 +112,6 @@ body
 {
 	margin: auto;
 	display: inline-block;
-}
-
-.bank-account-prefabs
-{
-	display: flex;
-	padding: 5px;
-	justify-content: space-evenly;
-	align-items: center;
-	width:65%;
-}
-
-.bank-account-prefab-balance
-{
-	color:green;
-}
-
-.bank-account-balance-total-title, .bank-account-balance-total-amount
-{
-	display:inline-block;
-}
-
-.bank-account-create-new
-{
-	margin: 0 auto;
+	position: relative;
+	left: 50px;
 }
