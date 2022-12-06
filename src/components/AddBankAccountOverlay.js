@@ -25,7 +25,7 @@ export default function AddBankAccountOverlay({open, onClose, accountAdded})
 
 		<div id = "main-overlay">
 
-				<label id = "label-static-create-account-text"> Please select the account you would like to open: 
+				<label className = "bank-app-label"> Please select the account you would like to open: 
 					<br/><br/>
 					<select className = "bank-account-dropdown" value = {value} onChange = {handleChange}>
 						<option className = "bank-account-dropdown-option" value = "chequings">Chequings Account</option>

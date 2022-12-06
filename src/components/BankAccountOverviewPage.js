@@ -13,7 +13,7 @@ const showAccountStyle = "bank-account-prefabs";
 
 var chequingsAccountStyle = hiddenStyle;
 var savingsAccountStyle = hiddenStyle;
-var addBankAccountButtonStyle = "bank-account-buttons";
+var addBankAccountButtonStyle = "bank-app-buttons";
 
 export default function BankAccountOverview() 
 {
@@ -43,21 +43,24 @@ export default function BankAccountOverview()
 
 	return (
 
-		<div className = "bank-account-div" id = "bank-account-overview-container">
+		<div className = "bank-app-div" id = "bank-app-overview-container">
 
-			<div className = "bank-account-div" id = "bank-account-user-info-top">
-				<h2 className = "bank-account-heading" id = "username-heading"> Welcome, [USERNAME] </h2>
+			<div>
+				<h1 className = "bank-app-title">Bank Application</h1>
 
 				<Link to = "/">
-					<button className = "bank-account-buttons" id = "bank-account-sign-out-button" type = "button"> Sign Out </button>
+					<button className = "bank-app-buttons" id = "bank-account-sign-out-button" type = "button"> Sign Out </button>
 				</Link>
+
+				<h3 id = "username-heading"> [USERNAME] </h3>
+
 			</div>
 
 			<br/><br/>
 
 			<AddBankAccountOverlay open = {isOpen} onClose = {() => setIsOpen(false)} accountAdded = {determineAccountToOpen}/>
 
-			<div className = "bank-account-div" id = "bank-accounts-owned-middle">
+			<div className = "bank-app-div" id = "bank-accounts-owned-middle">
 				<h2 className = "bank-account-heading">Bank Accounts</h2>
 
 				<div className = {savingsAccountStyle} id = "bank-account-prefab01">
@@ -87,7 +90,7 @@ export default function BankAccountOverview()
 
 			<br></br> <br></br>
 
-			<div className = "bank-account-div" id = "credit-cards-owned-bottom">
+			<div className = "bank-app-div" id = "credit-cards-owned-bottom">
 				<h2 className = "bank-account-heading">Credit Cards</h2>
 
 				<div className = "bank-account-prefabs" id = "credit-account-prefab01">
@@ -99,7 +102,7 @@ export default function BankAccountOverview()
 				<br/>
 				
 				<div className = "bank-account-create-new">
-					<button className = "bank-account-buttons" id = "bank-account-create-new-account-button" type = "button"> Add New Account</button>
+					<button className = "bank-app-buttons" id = "bank-account-create-new-account-button" type = "button"> Add New Account</button>
 				</div>
 
 				<div className = "bank-account-balance-total">

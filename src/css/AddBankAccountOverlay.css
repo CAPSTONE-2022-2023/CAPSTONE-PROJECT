@@ -9,6 +9,7 @@
 	z-index: 1000;
 	border: 2px solid #ff7300;
 	border-radius: 5px;
+	font-family:"Playfair Display", serif; 
 }
 
 #overlay-background
@@ -20,6 +21,7 @@
 	bottom: 0;
 	background-color: rgba(0, 0, 0, 0.65);
 	z-index: 1000;
+	font-family:"Playfair Display", serif; 
 }
 
 #overlayButton-openAccount
@@ -37,12 +39,6 @@
 	background-image: linear-gradient(45deg, #e71414 0%, #eb5151  51%, #e71414  100%);
 	top: 20px;
 	left: 150px;
-}
-
-#label-static-create-account-text
-{
-	text-align: center;
-	font-weight: bold;
 }
 
  /* The container must be positioned relative: */
