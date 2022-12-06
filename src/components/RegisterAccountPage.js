@@ -21,7 +21,9 @@ const RegisterPage = () => {
 				<input id="username" type="username" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />
 				<label htmlFor="username">Password: </label>
 				<input id="password" type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-				<input type="submit" value="Login" />
+				<label htmlFor="username">Re-enter Password: </label>
+				<input id="password" type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+				<input type="submit" value="Register" />
 			</form>
 		</div>
 	)
