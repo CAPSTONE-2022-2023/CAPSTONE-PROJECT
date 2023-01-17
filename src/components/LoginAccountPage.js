@@ -1,30 +1,56 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 import '../css/LoginPage.css';
 
+const hiddenStyle = "hidden";
+const showErrorStyle = "login-error-box";
+var errorMessageStyle = hiddenStyle;
+
 const LoginPage = () => 
 {
-	const [username, setUsername] = useState('');
+	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [error, setError] = useState();
-	const navigate = useNavigate();
+	const [error, setError] = useState('');
+	const navigate = useNavigate(); 
 
-	const onSubmit = (e) => 
+	async function loginUser(event) 
 	{
-		e.preventDefault();
+		event.preventDefault();
 
-		// TODO
-		if (username === "BOB" && password === "1234") 
+		// After the user inputs their email/password, it's going to send a POST request to the database, asking it to check to see if there's an email/password combination
+		// in the database that matches the email/password combination inputted in the Login Page (this part of the code goes to backend/routes/login.js)
+		const response = await fetch('http://localhost:5000/login', 
 		{
-			navigate("/bankAccountOverview")
-		}
+			method: 'POST',
+			headers: 
+			{
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(
+				{
+					email,
+					password,
+				}
+			),
+		})
 
-		else 
+		// Waits until the database sends back the response, then gets the results and puts it in this variable.
+		const data = await response.json();
+
+		// Found the user
+		if (data.user)
 		{
-			setError("Incorrect username or password")
+			errorMessageStyle = hiddenStyle;
+			alert("Login successful!");
+			navigate("/bankAccountOverview");
 		}
-
+		else
+		{
+			errorMessageStyle = showErrorStyle;
+			setError("Error! Invalid email address and/or password.");
+		}
 	}
 
 	return (
@@ -34,20 +60,22 @@ const LoginPage = () =>
 				<h1 className = "bank-app-title">Bank Application</h1>
 			</div>
 
+			<div id = {errorMessageStyle}>{error}</div>
+
 			<div className = "bank-app-div" id = "login-container">
 
-				<form onSubmit = {(e) => onSubmit(e)}>
+				<form onSubmit = {loginUser}>
 
 					<span id = "login-signIn-title">Sign In</span>
 
 					<div className = "login-input-container">
-						<input id = "username" type="username" name = "username" value = {username} onChange = {(e) => setUsername(e.target.value)} required/>
-						<label id = "input-container-label" htmlFor = "username">Username</label>		
+						<input id = "email" type = "email" name = "email" value = {email} onChange = {(e) => setEmail(e.target.value)} required/>
+						<label id = "input-container-label" htmlFor = "email">Email Address</label>		
 					</div>
 
 					<br/><br/>
 					<div className = "login-input-container">		
-						<input id = "password" type="password" name = "password" value = {password} onChange = {(e) => setPassword(e.target.value)} required/>
+						<input id = "password" type = "password" name = "password" value = {password} onChange = {(e) => setPassword(e.target.value)} required/>
 						<label id = "input-container-label">Password</label>
 					</div>
 
@@ -62,9 +90,6 @@ const LoginPage = () =>
 						<Link to="/register">
 								<label className = "bank-app-static-label">Sign Up</label>
 						</Link>
-
-						<br/><br/>
-						<span id = "errorMessage-text"> {error} </span>
 					</div>
 				</form>	
 			</div>

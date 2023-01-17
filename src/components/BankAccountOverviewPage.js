@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AddBankAccountOverlay from './AddBankAccountOverlay';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+// import jwt from 'jsonwebtoken';
 
 import '../css/BankAccountOverview.css';
 
@@ -15,8 +16,30 @@ var chequingsAccountStyle = hiddenStyle;
 var savingsAccountStyle = hiddenStyle;
 var addBankAccountButtonStyle = "bank-app-buttons";
 
+// const navigate = useNavigate(); 
+
 export default function BankAccountOverview() 
 {
+
+	// useEffect(() => 
+	// {
+	// 	const token = localStorage.getItem('token');
+
+	// 	if (token)
+	// 	{
+	// 		const user = jwt.decode(token);
+	// 		if (!user)
+	// 		{
+	// 			localStorage.removeItem('token');
+	// 			navigate('/login')
+	// 		}
+	// 		// else
+	// 		// {
+	// 		// 	populateBankAccountOverview();
+	// 		// }
+	// 	}
+	// }, [])
+
 	const [isOpen, setIsOpen] = useState(false);
 
 	const determineAccountToOpen = (accountChosen) =>
