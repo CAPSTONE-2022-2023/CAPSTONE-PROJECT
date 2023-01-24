@@ -15,8 +15,8 @@ router.route('/').post(async (req, res) =>
     // If a user is found in the database with the matching email/password.
     if (user) 
     {
-        // Choose which data you want to send, which will then be inputted and encrypted in the Json Web Token (JWT).
-        // This is so when we decode the JWT after logging in, it will provide us the necessary information.
+        // Choose what data you want to send, which will then be inputted and encrypted in the JSON Web Token (JWT).
+        // This is so when we decode the JWT after logging in, it will provide the necessary information.
         const token = jwt.sign(
             {
                 firstName: user.firstName,
@@ -24,6 +24,7 @@ router.route('/').post(async (req, res) =>
                 email: user.email,
                 accounts: user.accounts
             }, 'v6jmSuatYPw5Njr6r4ANWWQq')
+
         return res.json({success: true, user: token})
     }
     else 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AddBankAccountOverlay from './AddBankAccountOverlay';
 import { Link, useNavigate } from "react-router-dom";
-// import jwt from 'jsonwebtoken';
+import jwtDecode from 'jwt-decode';
 
 import '../css/BankAccountOverview.css';
 
@@ -16,30 +16,15 @@ var chequingsAccountStyle = hiddenStyle;
 var savingsAccountStyle = hiddenStyle;
 var addBankAccountButtonStyle = "bank-app-buttons";
 
-// const navigate = useNavigate(); 
-
 export default function BankAccountOverview() 
 {
+	var token = localStorage.getItem('token');
+	var user = jwtDecode(token);
 
-	// useEffect(() => 
-	// {
-	// 	const token = localStorage.getItem('token');
+	const [localUser, setLocalUser] = useState(user);
 
-	// 	if (token)
-	// 	{
-	// 		const user = jwt.decode(token);
-	// 		if (!user)
-	// 		{
-	// 			localStorage.removeItem('token');
-	// 			navigate('/login')
-	// 		}
-	// 		// else
-	// 		// {
-	// 		// 	populateBankAccountOverview();
-	// 		// }
-	// 	}
-	// }, [])
-
+	console.log(localUser);
+	
 	const [isOpen, setIsOpen] = useState(false);
 
 	const determineAccountToOpen = (accountChosen) =>
@@ -75,7 +60,7 @@ export default function BankAccountOverview()
 					<button className = "bank-app-buttons" id = "bank-account-sign-out-button" type = "button"> Sign Out </button>
 				</Link>
 
-				<h3 id = "username-heading"> [USERNAME] </h3>
+				<h3 id = "username-heading">{localUser.firstName + " " + localUser.lastName}</h3>
 
 			</div>
 

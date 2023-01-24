@@ -19,8 +19,11 @@ const LoginPage = () =>
 	{
 		event.preventDefault();
 
-		// After the user inputs their email/password, it's going to send a POST request to the database, asking it to check to see if there's an email/password combination
-		// in the database that matches the email/password combination inputted in the Login Page (this part of the code goes to backend/routes/login.js)
+		/*
+		* After the user inputs their email/password, it's going to send a POST request to the database, asking it to check and see
+		* if there is an email/password combination in the database that matches the email/password combination inputted in the Login Page.
+		* (this part of the code goes to backend/routes/login.js).
+		*/
 		const response = await fetch('http://localhost:5000/login', 
 		{
 			method: 'POST',
@@ -35,13 +38,14 @@ const LoginPage = () =>
 				}
 			),
 		})
-
+		
 		// Waits until the database sends back the response, then gets the results and puts it in this variable.
 		const data = await response.json();
 
 		// Found the user
 		if (data.user)
 		{
+			localStorage.setItem('token', data.user);
 			errorMessageStyle = hiddenStyle;
 			alert("Login successful!");
 			navigate("/bankAccountOverview");
@@ -50,6 +54,7 @@ const LoginPage = () =>
 		{
 			errorMessageStyle = showErrorStyle;
 			setError("Error! Invalid email address and/or password.");
+			navigate("/login");
 		}
 	}
 

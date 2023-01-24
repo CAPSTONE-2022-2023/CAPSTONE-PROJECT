@@ -49,7 +49,7 @@ const userSchema = new Schema
         type: String,
         lowercase: true,
         required: true,
-        unique: true,   
+        unique: true,
         trim: true,
         minlength: 5
     },
@@ -57,7 +57,7 @@ const userSchema = new Schema
     {
         type: String,
         required: true,
-        unique: true,
+        unique: false,
         trim: true,
         minlength: 12
     },

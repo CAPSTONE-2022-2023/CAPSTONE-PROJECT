@@ -7,8 +7,7 @@ let User = require('../models/user.model');
 // Find all the users currently in the database.
 router.route('/').get((req, res) =>
 {
-    User.find()
-        .then(users => res.json(users))
+    User.find().then(users => res.json(users))
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
@@ -47,7 +46,7 @@ router.route('/:id').get((req, res) =>
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
-// Delete a user by their specific MongoDB generated ID.
+// Delete a user that matches the specific MongoDB generated ID.
 router.route('/:id').delete((req, res) =>
 {
     User.findByIdAndDelete(req.params.id)
@@ -55,7 +54,7 @@ router.route('/:id').delete((req, res) =>
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
-// Update a user's first name and last name by their specific MongoDB generated ID (can make it change other things in the future).
+// Update a user's first name and last name by their specific MongoDB generated ID (can make it change other things by adding more).
 router.route('/update/:id').post((req, res) =>
 {
     User.findById(req.params.id)

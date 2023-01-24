@@ -54,7 +54,7 @@ export default class RegisterPage extends Component
 		this.setState({confirmPassword: e.target.value});
 	}
 
-	onSubmit(e)
+	async onSubmit(e)
 	{
 		e.preventDefault();
 
@@ -76,17 +76,19 @@ export default class RegisterPage extends Component
 					fieldInputErrors.password, fieldInputErrors.confirmPassword]
 			});
 
-		// If the data provided in the Register Page is valid and passed all the checks, send a POST request to the database to upload to the MongoDB database.
-		// which is located in backend/routes/register.js 
+		// If the data provided to the Register Page is valid and passed all the checks, send a POST request to the database to upload the user to the MongoDB database.
+		// which is located in backend/routes/register.js
 		if (isDataValid)
 		{
 			console.log(user);
 
-			axios.post("/register/add", user)
-			.then(res => console.log(res.data))
+			await axios.post("http://localhost:5000/register/add", user).then(res => 
+			{
+				alert("User added! Continue to be redirected to the Login page.");
+				console.log(res.data)
+				window.location = "/login";
+			})
 			.catch(() => alert("Account creation failed! Please try again."));
-			alert("User added! Continue to be redirected to the Login page.");
-			window.location = "/login";
 		}
 	}
 
