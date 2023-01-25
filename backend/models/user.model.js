@@ -29,7 +29,6 @@ const userSchema = new Schema
     firstName:
     {
         type: String,
-        lowercase: true,
         required: true,
         unique: false,
         trim: true,
@@ -38,7 +37,6 @@ const userSchema = new Schema
     lastName:
     {
         type: String,
-        lowercase: true,
         required: true,
         unique: false,
         trim: true,

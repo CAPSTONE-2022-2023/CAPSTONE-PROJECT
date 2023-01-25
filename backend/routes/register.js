@@ -21,7 +21,8 @@ router.route('/add').post((req, res) =>
     const password = req.body.password;
     const accounts = 
     [
-        new BankAccount({id: Math.floor(100000 + Math.random() * 900000)})
+        new BankAccount({id: Math.floor(100000 + Math.random() * 900000)}),
+        new BankAccount({id: Math.floor(100000 + Math.random() * 900000), accType: "savings"})
     ]
 
     const newUser = new User(
@@ -54,7 +55,7 @@ router.route('/:id').delete((req, res) =>
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
-// Update a user's first name and last name by their specific MongoDB generated ID (can make it change other things by adding more).
+// Update a user's information (first name, last name, email, password, and accounts) by their specific MongoDB generated ID.
 router.route('/update/:id').post((req, res) =>
 {
     User.findById(req.params.id)
@@ -62,6 +63,9 @@ router.route('/update/:id').post((req, res) =>
             {
                 user.firstName = req.body.firstName;
                 user.lastName = req.body.lastName;
+                user.email = req.body.email;
+                user.password = req.body.password;
+                user.accounts = req.body.accounts;
 
                 user.save()
                     .then(() => res.json('User updated!'))

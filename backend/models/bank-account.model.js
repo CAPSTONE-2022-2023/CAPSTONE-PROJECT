@@ -10,7 +10,7 @@ const bankAccountSchema = new Schema
     id:
     {
         type: Number,
-        required: false,
+        required: true,
         unique: true,
         min: 0,
         max: 999999,

@@ -12,8 +12,8 @@ var valueOfBalances = 0;
 const hiddenStyle = "hidden";
 const showAccountStyle = "bank-account-prefabs";
 
-var chequingsAccountStyle = hiddenStyle;
-var savingsAccountStyle = hiddenStyle;
+var chequingsAccountStyle = showAccountStyle;
+var savingsAccountStyle = showAccountStyle;
 var addBankAccountButtonStyle = "bank-app-buttons";
 
 export default function BankAccountOverview() 
@@ -25,29 +25,30 @@ export default function BankAccountOverview()
 
 	console.log(localUser);
 	
+
 	const [isOpen, setIsOpen] = useState(false);
 
-	const determineAccountToOpen = (accountChosen) =>
-	{
-		if (accountChosen === "chequings" && !hasOpenedChequingsAccount)
-		{
-			hasOpenedChequingsAccount = true;
-			valueOfBalances += 100;
-			chequingsAccountStyle = showAccountStyle;
-		}
+	// const determineAccountToOpen = (accountChosen) =>
+	// {
+	// 	if (accountChosen === "chequings" && !hasOpenedChequingsAccount)
+	// 	{
+	// 		hasOpenedChequingsAccount = true;
+	// 		valueOfBalances += 100;
+	// 		chequingsAccountStyle = showAccountStyle;
+	// 	}
 
-		if (accountChosen === "savings" && !hasOpenedSavingsAccount)
-		{
-			hasOpenedSavingsAccount = true;
-			valueOfBalances += 100;
-			savingsAccountStyle = showAccountStyle;
-		}
+	// 	if (accountChosen === "savings" && !hasOpenedSavingsAccount)
+	// 	{
+	// 		hasOpenedSavingsAccount = true;
+	// 		valueOfBalances += 100;
+	// 		savingsAccountStyle = showAccountStyle;
+	// 	}
 
-		if (hasOpenedChequingsAccount && hasOpenedSavingsAccount)
-		{
-			addBankAccountButtonStyle = hiddenStyle;
-		}
-	};
+	// 	if (hasOpenedChequingsAccount && hasOpenedSavingsAccount)
+	// 	{
+	// 		addBankAccountButtonStyle = hiddenStyle;
+	// 	}
+	// };
 
 	return (
 
@@ -66,29 +67,29 @@ export default function BankAccountOverview()
 
 			<br/><br/>
 
-			<AddBankAccountOverlay open = {isOpen} onClose = {() => setIsOpen(false)} accountAdded = {determineAccountToOpen}/>
+			{/* <AddBankAccountOverlay open = {isOpen} onClose = {() => setIsOpen(false)} accountAdded = {determineAccountToOpen}/> */}
 
 			<div className = "bank-app-div" id = "bank-accounts-owned-middle">
 				<h2 className = "bank-account-heading">Bank Accounts</h2>
 
 				<div className = {savingsAccountStyle} id = "bank-account-prefab01">
 					<h3 className = "bank-account-prefab-heading" id = "bank-account-heading-prefab01">Personal Savings Account</h3>
-					<h3 className = "bank-account-prefab-number" id = "bank-account-number-prefab01">ID: 399-145723</h3>
-					<p className = "bank-account-prefab-balance" id = "bank-account-balance-prefab01"> $100.00</p>
+					<h3 className = "bank-account-prefab-number" id = "bank-account-number-prefab01">ID: 399-{localUser.accounts[1].id}</h3>
+					<p className = "bank-account-prefab-balance" id = "bank-account-balance-prefab01"> ${localUser.accounts[1].balance}</p>
 				</div>
 
 				<br/><br/>
 
 				<div className = {chequingsAccountStyle} id = "bank-account-prefab02">
 					<h3 className = "bank-account-prefab-heading" id = "bank-account-heading-prefab02">Everyday Chequings Account</h3>
-					<h3 className = "bank-account-prefab-number" id = "bank-account-number-prefab02">ID: 399-145724</h3>
-					<p className = "bank-account-prefab-balance" id = "bank-account-balance-prefab02"> $100.00 </p>
+					<h3 className = "bank-account-prefab-number" id = "bank-account-number-prefab02">ID: 399-{localUser.accounts[0].id}</h3>
+					<p className = "bank-account-prefab-balance" id = "bank-account-balance-prefab02"> ${localUser.accounts[0].balance} </p>
 				</div>
 				
 				<br/>
-				<div className = "bank-account-create-new">
+				{/* <div className = "bank-account-create-new">
 					<button className = {addBankAccountButtonStyle} id = "bank-account-create-new-account-button" type = "button" onClick = {() => setIsOpen(true)}> Add New Account</button>
-				</div>
+				</div> */}
 
 				<div className = "bank-account-balance-total">
 					<h3 className = "bank-account-balance-total-title">TOTAL: </h3>
