@@ -2,11 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require("cookie-parser");
+const path = require('path');
 
 require('dotenv').config();
 
 const app = express();
-const port = process.env.port || 5000;
+const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(cookieParser());
@@ -30,6 +31,23 @@ app.use('/register', registerRouter);
 
 const loginRouter = require('./routes/login');
 app.use('/login', loginRouter);
+
+if (process.env.NODE_ENV === "production")
+{
+    app.use(express.static(path.join(__dirname, '/front-end/build')));
+
+    app.get('*', (req, res) => 
+    {
+        res.sendFile(path.join(__dirname, 'front-end', 'build', 'index.html'))
+    });
+}
+else
+{
+    app.get('/', (req, res) =>
+    {
+        res.send('Development build running...');
+    });
+}
 
 app.listen(port, () => 
 {
