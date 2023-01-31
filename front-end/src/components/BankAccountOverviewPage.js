@@ -78,6 +78,18 @@ export default function BankAccountOverview()
 					<p className = "bank-account-prefab-balance" id = "bank-account-balance-prefab01"> ${localUser.accounts[1].balance}</p>
 				</div>
 
+				<form>
+  				<div>
+    			<label>Deposit</label>
+    			<input type="number" name="text" min='10' max='1000' placeholder='$Amount'/>
+				<input type="submit" value="Submit" />
+  				<label>Withdraw</label>
+  				<input type="number" name="text" min='10' max='1000' placeholder='$Amount' />
+				<input type="submit" value="Submit" />
+  				</div>
+				</form>
+
+
 				<br/><br/>
 
 				<div className = {chequingsAccountStyle} id = "bank-account-prefab02">
@@ -85,6 +97,16 @@ export default function BankAccountOverview()
 					<h3 className = "bank-account-prefab-number" id = "bank-account-number-prefab02">ID: 399-{localUser.accounts[0].id}</h3>
 					<p className = "bank-account-prefab-balance" id = "bank-account-balance-prefab02"> ${localUser.accounts[0].balance} </p>
 				</div>
+				<form>
+  				<div>
+    			<label>Deposit</label>
+   				 <input type="number" name="text" min='10' max='1000' placeholder='$Amount'/>
+				<input type="submit" value="Submit" />
+  				<label>Withdraw</label>
+  				<input type="number" name="text" min='10' max='1000' placeholder='$Amount'/>
+				<input type="submit" value="Submit" />
+  				</div>
+				</form>
 				
 				<br/>
 				{/* <div className = "bank-account-create-new">
