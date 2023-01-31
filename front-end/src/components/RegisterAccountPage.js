@@ -82,7 +82,7 @@ export default class RegisterPage extends Component
 		{
 			console.log(user);
 
-			await axios.post("http://localhost:5000/register/add", user).then(res => 
+			await axios.post("https://localhost:5000/register/add", user).then(res => 
 			{
 				alert("User added! Continue to be redirected to the Login page.");
 				console.log(res.data)

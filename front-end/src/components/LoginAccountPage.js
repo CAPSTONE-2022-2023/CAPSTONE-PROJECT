@@ -24,7 +24,7 @@ const LoginPage = () =>
 		* if there is an email/password combination in the database that matches the email/password combination inputted in the Login Page.
 		* (this part of the code goes to backend/routes/login.js).
 		*/
-		const response = await fetch('http://localhost:5000/login', 
+		const response = await fetch('https://localhost:5000/login', 
 		{
 			method: 'POST',
 			headers: 
