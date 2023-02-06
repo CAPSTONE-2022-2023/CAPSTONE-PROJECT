@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 
 import '../css/HomePage.css'
 
-const HomePage = () => {
+const HomePage = () => 
+{
+	const token = localStorage.getItem('token');
+	if (token) localStorage.removeItem('token');
+	
 	return (
 		<div className = "bank-app-div" id = "bank-app-overview-container">
 			
