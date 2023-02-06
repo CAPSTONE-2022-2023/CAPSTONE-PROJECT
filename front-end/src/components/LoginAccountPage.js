@@ -15,6 +15,9 @@ const LoginPage = () =>
 	const [error, setError] = useState('');
 	const navigate = useNavigate(); 
 
+	const token = localStorage.getItem('token');
+	if (token) localStorage.removeItem('token');
+	
 	async function loginUser(event) 
 	{
 		event.preventDefault();
