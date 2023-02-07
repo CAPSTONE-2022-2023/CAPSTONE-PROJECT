@@ -56,21 +56,38 @@ router.route('/:id').delete((req, res) =>
 });
 
 // Update a user's information (first name, last name, email, password, and accounts) by their specific MongoDB generated ID.
-router.route('/update/:id').post((req, res) =>
-{
-    User.findById(req.params.id)
-        .then(user => 
-            {
-                user.firstName = req.body.firstName;
-                user.lastName = req.body.lastName;
-                user.email = req.body.email;
-                user.password = req.body.password;
-                user.accounts = req.body.accounts;
+// router.route('/update/:id').post((req, res) =>
+// {
+//     User.findById(req.params.id)
+//         .then(user => 
+//             {
+//                 user.firstName = req.body.firstName;
+//                 user.lastName = req.body.lastName;
+//                 user.email = req.body.email;
+//                 user.password = req.body.password;
+//                 user.accounts = req.body.accounts;
 
-                user.save()
-                    .then(() => res.json('User updated!'))
-                    .catch(() => res.status(400).json('Error: ' + err));
-            })
+//                 user.save()
+//                     .then(() => res.json('User updated!'))
+//                     .catch(() => res.status(400).json('Error: ' + err));
+//             })
+// });
+
+router.route('/update').post((req, res) =>
+{
+    User.findOne({email: req.body.email})
+    .then(user =>
+        {
+            user.firstName = req.body.firstName;
+            user.lastName = req.body.lastName;
+            user.email = req.body.email;
+            user.accounts = req.body.accounts;
+
+            user.save()
+            .then(() => res.json("User updated!"))
+            .catch((err) => res.status(400).json('Error: ' + err));
+        })
+        .catch((err) => res.status(400).json("Error: " + err));
 });
 
 module.exports = router;
