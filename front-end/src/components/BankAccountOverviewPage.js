@@ -1,6 +1,7 @@
 import React, { Component, useEffect, useState } from 'react';
 import AddBankAccountOverlay from './AddBankAccountOverlay';
 import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
 import '../css/BankAccountOverview.css';
@@ -28,6 +29,7 @@ export default class BankAccountOverview extends Component
 		this.updateWithdrawForSavingsAccount = this.updateWithdrawForSavingsAccount.bind(this);
 		this.updateDepositForchequingAccount = this.updateDepositForchequingAccount.bind(this);
 		this.updateWithdrawForchequingAccount = this.updateWithdrawForchequingAccount.bind(this);
+		this.updateUserInDatabase = this.updateUserInDatabase.bind(this);
 
 		// Default state of the variable.
 		this.state = 
@@ -65,13 +67,20 @@ export default class BankAccountOverview extends Component
 	// ADD ALL NEW FUNCTIONS UNDER THIS COMMENT HERE. MAKE SURE TO BIND THE FUNCTION IN THE CONSTRUCTOR.
 	// When calling a function in a HTML tag (div, form, etc), type: {this.[functionName]} (Check the RegisterAccountPage.js script for examples)
 
-	
 	updateUser(newUser) 
 	{
-		this.setState( 
+		this.setState({ user: newUser });
+	}
+
+	updateUserInDatabase(e)
+	{
+		e.preventDefault();
+
+		axios.post("http://localhost:5000/register/update", this.state.user).then(() => 
 			{
-				user: newUser
-			} );
+				alert("Data updated.");
+			})
+			.catch((err) => alert("Unable to update balance to database.\n" + err));
 	}
 
 	updateDepositForSavingsAccount(e)
@@ -100,6 +109,7 @@ export default class BankAccountOverview extends Component
 		// Save the data
 		// TODO: Change this to API Call
 		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+		this.updateUserInDatabase(e);
 	}
 
 	updateWithdrawForSavingsAccount(e)
@@ -132,6 +142,7 @@ export default class BankAccountOverview extends Component
 		// Save the data
 		// TODO: Change this to API Call
 		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+		this.updateUserInDatabase(e);
 	}
 
 	updateDepositForchequingAccount(e)
@@ -156,6 +167,7 @@ export default class BankAccountOverview extends Component
 		// Save the data
 		// TODO: Change this to API Call
 		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+		this.updateUserInDatabase(e);
 	}
 
 	updateWithdrawForchequingAccount(e)
@@ -184,6 +196,7 @@ export default class BankAccountOverview extends Component
 		// Save the data
 		// TODO: Change this to API Call
 		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+		this.updateUserInDatabase(e);
 	}
 
 	calculateAccountTotal() {
