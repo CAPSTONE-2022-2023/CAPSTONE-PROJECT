@@ -7,7 +7,6 @@ import '../css/BankAccountOverview.css';
 
 var hasOpenedChequingsAccount = false;
 var hasOpenedSavingsAccount = false;
-var valueOfBalances = 0;
 
 const hiddenStyle = "hidden";
 const showAccountStyle = "bank-account-prefabs";
@@ -25,6 +24,10 @@ export default class BankAccountOverview extends Component
 		// When creating a new function, make sure to bind it using this format; otherwise, it will not work.
 		// e.g. this.[functionName] = this.[functionName].bind(this); (remove the square brackets).
 		this.updateUser = this.updateUser.bind(this);
+		this.updateDepositForSavingsAccount = this.updateDepositForSavingsAccount.bind(this);
+		this.updateWithdrawForSavingsAccount = this.updateWithdrawForSavingsAccount.bind(this);
+		this.updateDepositForchequingAccount = this.updateDepositForchequingAccount.bind(this);
+		this.updateWithdrawForchequingAccount = this.updateWithdrawForchequingAccount.bind(this);
 
 		// Default state of the variable.
 		this.state = 
@@ -71,6 +74,129 @@ export default class BankAccountOverview extends Component
 			} );
 	}
 
+	updateDepositForSavingsAccount(e)
+	{
+		// Prevent page from reloading
+		e.preventDefault();
+
+		// Extract the value from the form
+		const form = e.target;
+		const depositAmount = +Object.fromEntries(new FormData(form))['deposit-amount'];
+		
+		// Reset the form
+		form.reset();
+
+		if (isNaN(depositAmount)) {
+			return alert('Not valid deposit amount');
+		}
+
+		// Get the right account
+		const chequingAccount = this.state.user.accounts[0];
+		const savingsAccount = this.state.user.accounts[1];
+
+		// Update the account balance
+		savingsAccount.balance += depositAmount;
+
+		// Save the data
+		// TODO: Change this to API Call
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+	}
+
+	updateWithdrawForSavingsAccount(e)
+	{
+		
+		// Prevent page from reloading
+		e.preventDefault();
+
+		// Extract the value from the form
+		const form = e.target;
+
+		// const a = "100";
+		// +a === 100;
+		const withdrawAmount = +Object.fromEntries(new FormData(form))['withdraw-amount'];
+		
+		// Reset the form
+		form.reset();
+
+		if (isNaN(withdrawAmount)) {
+			return alert('Not valid withdraw amount');
+		}
+
+		// Get the right account
+		const chequingAccount = this.state.user.accounts[0];
+		const savingsAccount = this.state.user.accounts[1];
+
+		// Update the account balance
+		savingsAccount.balance -= withdrawAmount;
+
+		// Save the data
+		// TODO: Change this to API Call
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+	}
+
+	updateDepositForchequingAccount(e)
+	{
+		// Prevent page from reloading
+		e.preventDefault();
+
+		// Extract the value from the form
+		const form = e.target;
+		const depositAmount = +Object.fromEntries(new FormData(form))['deposit-amount'];
+		
+		// Reset the form
+		form.reset();
+
+		// Get the right account
+		const chequingAccount = this.state.user.accounts[0];
+		const savingsAccount = this.state.user.accounts[1];
+
+		// Update the account balance
+		chequingAccount.balance += depositAmount;
+
+		// Save the data
+		// TODO: Change this to API Call
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+	}
+
+	updateWithdrawForchequingAccount(e)
+	{
+		
+		// Prevent page from reloading
+		e.preventDefault();
+
+		// Extract the value from the form
+		const form = e.target;
+
+		// const a = "100";
+		// +a === 100;
+		const withdrawAmount = +Object.fromEntries(new FormData(form))['withdraw-amount'];
+		
+		// Reset the form
+		form.reset();
+
+		// Get the right account
+		const chequingAccount = this.state.user.accounts[0];
+		const savingsAccount = this.state.user.accounts[1];
+
+		// Update the account balance
+		chequingAccount.balance -= withdrawAmount;
+
+		// Save the data
+		// TODO: Change this to API Call
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+	}
+
+	calculateAccountTotal() {
+		// Get the right account
+		const chequingAccountBalance = this.state.user?.accounts[0].balance ?? 0;
+		const savingsAccountBalance = this.state.user?.accounts[1].balance ?? 0;
+
+		const total = chequingAccountBalance + savingsAccountBalance;
+
+		// sets it to two decimal places
+		return total.toFixed(2);
+	}
+
 	render()
 	{
 		return(
@@ -100,17 +226,19 @@ export default class BankAccountOverview extends Component
 						<p className = "bank-account-prefab-balance" id = "bank-account-balance-prefab01"> ${this.state.user.accounts[1].balance}</p>
 					</div>
 
-					<form>
-						<div>
+					<div>
+					<form onSubmit={this.updateDepositForSavingsAccount}>
 							<label>Deposit</label>
-							<input type="number" name="text" min='10' max='1000' placeholder='$Amount'/>
+							<input type="number" name="deposit-amount" min='10' max='1000' placeholder='$10'/>
 							<input type="submit" value="Submit" />
-
-							<label>Withdraw</label>
-							<input type="number" name="text" min='10' max='1000' placeholder='$Amount' />
-							<input type="submit" value="Submit" />
-						</div>
 					</form>
+
+						<form onSubmit={this.updateWithdrawForSavingsAccount}>
+							<label>Withdraw</label>
+							<input type="number" name="withdraw-amount" min='10' max='1000' placeholder='$10' />
+							<input type="submit" value="Submit" />
+						</form>
+					</div>
 
 					<br/><br/>
 
@@ -120,17 +248,19 @@ export default class BankAccountOverview extends Component
 						<p className = "bank-account-prefab-balance" id = "bank-account-balance-prefab02"> ${this.state.user.accounts[0].balance} </p>
 					</div>
 
-					<form>
-						<div>
+   					<div>
+					<form onSubmit={this.updateDepositForchequingAccount}>
 							<label>Deposit</label>
-							<input type="number" name="text" min='10' max='1000' placeholder='$Amount'/>
+							<input type="number" name="deposit-amount" min='10' max='1000' placeholder='$10'/>
 							<input type="submit" value="Submit" />
-
-							<label>Withdraw</label>
-							<input type="number" name="text" min='10' max='1000' placeholder='$Amount'/>
-							<input type="submit" value="Submit" />
-						</div>
 					</form>
+
+						<form onSubmit={this.updateWithdrawForchequingAccount}>
+							<label>Withdraw</label>
+							<input type="number" name="withdraw-amount" min='10' max='1000' placeholder='$10' />
+							<input type="submit" value="Submit" />
+						</form>
+					</div>
 				
 					<br/>
 					{/* <div className = "bank-account-create-new">
@@ -139,7 +269,7 @@ export default class BankAccountOverview extends Component
 
 					<div className = "bank-account-balance-total">
 						<h3 className = "bank-account-balance-total-title">TOTAL: </h3>
-						<p className = "bank-account-balance-total-amount"> ${valueOfBalances} </p>
+						<p className = "bank-account-balance-total-amount"> ${this.calculateAccountTotal()} </p>
 					</div>
 				</div>
 
