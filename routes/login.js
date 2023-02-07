@@ -19,6 +19,7 @@ router.route('/').post(async (req, res) =>
         // This is so when we decode the JWT after logging in, it will provide the necessary information.
         const token = jwt.sign(
             {
+                id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
@@ -29,7 +30,7 @@ router.route('/').post(async (req, res) =>
     }
     else 
     {
-        return res.json({sucess: false, user: false});
+        return res.json({success: false, user: false});
     }
 });
 
