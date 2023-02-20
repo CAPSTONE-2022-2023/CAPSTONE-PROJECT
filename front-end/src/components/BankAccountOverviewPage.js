@@ -16,10 +16,8 @@ var chequingsAccountStyle = showAccountStyle;
 var savingsAccountStyle = showAccountStyle;
 var addBankAccountButtonStyle = "bank-app-buttons";
 
-export default class BankAccountOverview extends Component
-{
-	constructor(props)
-	{
+export default class BankAccountOverview extends Component {
+	constructor(props) {
 		super(props);
 
 		// When creating a new function, make sure to bind it using this format; otherwise, it will not work.
@@ -32,31 +30,29 @@ export default class BankAccountOverview extends Component
 		this.updateUserInDatabase = this.updateUserInDatabase.bind(this);
 
 		// Default state of the variable.
-		this.state = 
+		this.state =
 		{
 			user:
 			{
 				firstName: "",
 				lastName: "",
 				email: "",
-				accounts: 
-				[
-					{id: 1, balance: 0},
-					{id: 1, balance: 0}
-				]
+				accounts:
+					[
+						{ id: 1, balance: 0 },
+						{ id: 1, balance: 0 }
+					]
 			}
-		}	
+		}
 	}
 
 	// Built-in React function. Gets called after a component is mounted.
-	componentDidMount()
-	{
+	componentDidMount() {
 		const token = localStorage.getItem('token');
 		var user;
 
 		if (token) user = jwtDecode(token);
-		else
-		{
+		else {
 			alert("Your session has expired. Redirecting you to the Home Page...");
 			window.location = '/';
 		}
@@ -67,31 +63,27 @@ export default class BankAccountOverview extends Component
 	// ADD ALL NEW FUNCTIONS UNDER THIS COMMENT HERE. MAKE SURE TO BIND THE FUNCTION IN THE CONSTRUCTOR.
 	// When calling a function in a HTML tag (div, form, etc), type: {this.[functionName]} (Check the RegisterAccountPage.js script for examples)
 
-	updateUser(newUser) 
-	{
+	updateUser(newUser) {
 		this.setState({ user: newUser });
 	}
 
-	updateUserInDatabase(e)
-	{
+	updateUserInDatabase(e) {
 		e.preventDefault();
 
-		axios.post("http://localhost:5000/register/update", this.state.user).then(() => 
-			{
-				alert("Data updated.");
-			})
+		axios.post("http://localhost:5000/register/update", this.state.user).then(() => {
+			alert("Data updated.");
+		})
 			.catch((err) => alert("Unable to update balance to database.\n" + err));
 	}
 
-	updateDepositForSavingsAccount(e)
-	{
+	updateDepositForSavingsAccount(e) {
 		// Prevent page from reloading
 		e.preventDefault();
 
 		// Extract the value from the form
 		const form = e.target;
 		const depositAmount = +Object.fromEntries(new FormData(form))['deposit-amount'];
-		
+
 		// Reset the form
 		form.reset();
 
@@ -108,13 +100,12 @@ export default class BankAccountOverview extends Component
 
 		// Save the data
 		// TODO: Change this to API Call
-		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount] } });
 		this.updateUserInDatabase(e);
 	}
 
-	updateWithdrawForSavingsAccount(e)
-	{
-		
+	updateWithdrawForSavingsAccount(e) {
+
 		// Prevent page from reloading
 		e.preventDefault();
 
@@ -124,7 +115,7 @@ export default class BankAccountOverview extends Component
 		// const a = "100";
 		// +a === 100;
 		const withdrawAmount = +Object.fromEntries(new FormData(form))['withdraw-amount'];
-		
+
 		// Reset the form
 		form.reset();
 
@@ -141,19 +132,18 @@ export default class BankAccountOverview extends Component
 
 		// Save the data
 		// TODO: Change this to API Call
-		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount] } });
 		this.updateUserInDatabase(e);
 	}
 
-	updateDepositForchequingAccount(e)
-	{
+	updateDepositForchequingAccount(e) {
 		// Prevent page from reloading
 		e.preventDefault();
 
 		// Extract the value from the form
 		const form = e.target;
 		const depositAmount = +Object.fromEntries(new FormData(form))['deposit-amount'];
-		
+
 		// Reset the form
 		form.reset();
 
@@ -166,13 +156,12 @@ export default class BankAccountOverview extends Component
 
 		// Save the data
 		// TODO: Change this to API Call
-		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount] } });
 		this.updateUserInDatabase(e);
 	}
 
-	updateWithdrawForchequingAccount(e)
-	{
-		
+	updateWithdrawForchequingAccount(e) {
+
 		// Prevent page from reloading
 		e.preventDefault();
 
@@ -182,7 +171,7 @@ export default class BankAccountOverview extends Component
 		// const a = "100";
 		// +a === 100;
 		const withdrawAmount = +Object.fromEntries(new FormData(form))['withdraw-amount'];
-		
+
 		// Reset the form
 		form.reset();
 
@@ -195,7 +184,7 @@ export default class BankAccountOverview extends Component
 
 		// Save the data
 		// TODO: Change this to API Call
-		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount]}});
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount] } });
 		this.updateUserInDatabase(e);
 	}
 
@@ -210,102 +199,135 @@ export default class BankAccountOverview extends Component
 		return total.toFixed(2);
 	}
 
-	render()
-	{
-		return(
-			
-			<div className = "bank-app-div" id = "bank-app-overview-container">
+	render() {
+		return (
+
+			<div className="bank-app-div" id="bank-app-overview-container">
 
 				<div>
-					<h1 className = "bank-app-title">Bank Application</h1>
+					<h1 className="bank-app-title">Bank Application</h1>
 
-					<Link to = "/">
-						<button className = "bank-app-buttons" id = "bank-account-sign-out-button" type = "button"> Sign Out </button>
+					<Link to="/">
+						<button className="bank-app-buttons" id="bank-account-sign-out-button" type="button"> Sign Out </button>
 					</Link>
 
-					<h3 id = "username-heading">{this.state.user.firstName + " " + this.state.user.lastName}</h3>
+					<h3 id="username-heading">{this.state.user.firstName + " " + this.state.user.lastName}</h3>
 				</div>
 
-				<br/><br/>
+				<br /><br />
 
 				{/* <AddBankAccountOverlay open = {isOpen} onClose = {() => setIsOpen(false)} accountAdded = {determineAccountToOpen}/> */}
 
-				<div className = "bank-app-div" id = "bank-accounts-owned-middle">
-					<h2 className = "bank-account-heading">Bank Accounts</h2>
+				<div className="bank-app-div" id="bank-accounts-owned-middle">
+					<h2 className="bank-account-heading">Bank Accounts</h2>
 
-					<div className = {savingsAccountStyle} id = "bank-account-prefab01">
-						<h3 className = "bank-account-prefab-heading" id = "bank-account-heading-prefab01">Personal Savings Account</h3>
-						<h3 className = "bank-account-prefab-number" id = "bank-account-number-prefab01">ID: 399-{this.state.user.accounts[1].id}</h3>
-						<p className = "bank-account-prefab-balance" id = "bank-account-balance-prefab01"> ${this.state.user.accounts[1].balance}</p>
+					<div className={savingsAccountStyle} id="bank-account-prefab01">
+						<h3 className="bank-account-prefab-heading" id="bank-account-heading-prefab01">Personal Savings Account</h3>
+						<h3 className="bank-account-prefab-number" id="bank-account-number-prefab01">ID: 399-{this.state.user.accounts[1].id}</h3>
+						<p className="bank-account-prefab-balance" id="bank-account-balance-prefab01"> ${this.state.user.accounts[1].balance}</p>
 					</div>
 
 					<div>
-					<form onSubmit={this.updateDepositForSavingsAccount}>
+						<form onSubmit={this.updateDepositForSavingsAccount}>
 							<label>Deposit</label>
-							<input type="number" name="deposit-amount" min='10' max='1000' placeholder='$10'/>
+							<input type="number" name="deposit-amount" min='10' max='10000' placeholder='$10' />
 							<input type="submit" value="Submit" />
-					</form>
+						</form>
 
 						<form onSubmit={this.updateWithdrawForSavingsAccount}>
 							<label>Withdraw</label>
-							<input type="number" name="withdraw-amount" min='10' max='1000' placeholder='$10' />
+							<input type="number" name="withdraw-amount" min='10' max='10000' placeholder='$10' />
 							<input type="submit" value="Submit" />
 						</form>
 					</div>
+					<div class="dropdown">
 
-					<br/><br/>
+						<button class="dropbtn">View Statements</button>
+						<div class="dropdown-content">
+							<a href="/statementFebruary2022">February 2022</a>
+							<a href="/statementMarch2022">March 2022</a>
+							<a href="/statementApril2022">April 2022</a>
+							<a href="/statementMay2022">May 2022</a>
+							<a href="/statementJune2022">June 2022</a>
+							<a href="/statementJuly2022">July 2022</a>
+							<a href="/statementAugust2022">August 2022</a>
+							<a href="/statementSeptember2022">September 2022</a>
+							<a href="/statementOctober2022">October 2022</a>
+							<a href="/statementNovember2022">November 2022</a>
+							<a href="/statementDecember2022">December 2022</a>
+							<a href="/statementJanuary2023">January 2023</a>
+						</div>
+					</div>
+					<br /><br />
 
-					<div className = {chequingsAccountStyle} id = "bank-account-prefab02">
-						<h3 className = "bank-account-prefab-heading" id = "bank-account-heading-prefab02">Everyday Chequings Account</h3>
-						<h3 className = "bank-account-prefab-number" id = "bank-account-number-prefab02">ID: 399-{this.state.user.accounts[0].id}</h3>
-						<p className = "bank-account-prefab-balance" id = "bank-account-balance-prefab02"> ${this.state.user.accounts[0].balance} </p>
+					<div className={chequingsAccountStyle} id="bank-account-prefab02">
+						<h3 className="bank-account-prefab-heading" id="bank-account-heading-prefab02">Everyday Chequings Account</h3>
+						<h3 className="bank-account-prefab-number" id="bank-account-number-prefab02">ID: 399-{this.state.user.accounts[0].id}</h3>
+						<p className="bank-account-prefab-balance" id="bank-account-balance-prefab02"> ${this.state.user.accounts[0].balance} </p>
 					</div>
 
-   					<div>
-					<form onSubmit={this.updateDepositForchequingAccount}>
+					<div>
+						<form onSubmit={this.updateDepositForchequingAccount}>
 							<label>Deposit</label>
-							<input type="number" name="deposit-amount" min='10' max='1000' placeholder='$10'/>
+							<input type="number" name="deposit-amount" min='10' max='10000' placeholder='$10' />
 							<input type="submit" value="Submit" />
-					</form>
+						</form>
 
 						<form onSubmit={this.updateWithdrawForchequingAccount}>
 							<label>Withdraw</label>
-							<input type="number" name="withdraw-amount" min='10' max='1000' placeholder='$10' />
+							<input type="number" name="withdraw-amount" min='10' max='10000' placeholder='$10' />
 							<input type="submit" value="Submit" />
 						</form>
 					</div>
-				
-					<br/>
+					<div class="dropdown">
+
+						<button class="dropbtn">View Statements</button>
+						<div class="dropdown-content">
+							<a href="/statement2February2022">February 2022</a>
+							<a href="/statement2March2022">March 2022</a>
+							<a href="/statement2April2022">April 2022</a>
+							<a href="/statement2May2022">May 2022</a>
+							<a href="/statement2June2022">June 2022</a>
+							<a href="/statement2July2022">July 2022</a>
+							<a href="/statement2August2022">August 2022</a>
+							<a href="/statement2September2022">September 2022</a>
+							<a href="/statement2October2022">October 2022</a>
+							<a href="/statement2November2022">November 2022</a>
+							<a href="/statement2December2022">December 2022</a>
+							<a href="/statement2January2023">January 2023</a>
+						</div>
+					</div>
+					<br />
 					{/* <div className = "bank-account-create-new">
 						<button className = {addBankAccountButtonStyle} id = "bank-account-create-new-account-button" type = "button" onClick = {() => setIsOpen(true)}> Add New Account</button>
 					</div> */}
 
-					<div className = "bank-account-balance-total">
-						<h3 className = "bank-account-balance-total-title">TOTAL: </h3>
-						<p className = "bank-account-balance-total-amount"> ${this.calculateAccountTotal()} </p>
+					<div className="bank-account-balance-total">
+						<h3 className="bank-account-balance-total-title">TOTAL: </h3>
+						<p className="bank-account-balance-total-amount"> ${this.calculateAccountTotal()} </p>
 					</div>
 				</div>
 
 				<br></br> <br></br>
 
-				<div className = "bank-app-div" id = "credit-cards-owned-bottom">
-					<h2 className = "bank-account-heading">Credit Cards</h2>
+				<div className="bank-app-div" id="credit-cards-owned-bottom">
+					<h2 className="bank-account-heading">Credit Cards</h2>
 
-					<div className = "bank-account-prefabs" id = "credit-account-prefab01">
-						<h3 className = "bank-account-prefab-heading" id = "credit-account-heading-prefab01">Standard Credit Card</h3>
-						<h3 className = "bank-account-prefab-number" id = "credit-account-number-prefab01">#### #### #### ####</h3>
-						<p className = "bank-account-prefab-balance" id = "credit-account-balance-prefab01"> $###.## </p>
+					<div className="bank-account-prefabs" id="credit-account-prefab01">
+						<h3 className="bank-account-prefab-heading" id="credit-account-heading-prefab01">Standard Credit Card</h3>
+						<h3 className="bank-account-prefab-number" id="credit-account-number-prefab01">#### #### #### ####</h3>
+						<p className="bank-account-prefab-balance" id="credit-account-balance-prefab01"> $###.## </p>
 					</div>
 
-					<br/>
-				
-					<div className = "bank-account-create-new">
-						<button className = "bank-app-buttons" id = "bank-account-create-new-account-button" type = "button"> Add New Account</button>
+					<br />
+
+					<div className="bank-account-create-new">
+						<button className="bank-app-buttons" id="bank-account-create-new-account-button" type="button"> Add New Account</button>
 					</div>
 
-					<div className = "bank-account-balance-total">
-						<h3 className = "bank-account-balance-total-title">TOTAL: </h3>
-						<p className = "bank-account-balance-total-amount">$0.00</p>
+					<div className="bank-account-balance-total">
+						<h3 className="bank-account-balance-total-title">TOTAL: </h3>
+						<p className="bank-account-balance-total-amount">$0.00</p>
 					</div>
 				</div>
 			</div>
