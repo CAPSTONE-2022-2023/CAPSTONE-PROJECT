@@ -18,7 +18,8 @@ var creditCardAccountStyle = hiddenStyle;
 var addBankAccountButtonStyle = "bank-app-buttons";
 var addCreditCardAccountButtonStyle = "bank-app-buttons";
 
-export default class BankAccountOverview extends Component {
+export default class BankAccountOverview extends Component 
+{
 	constructor(props) 
 	{
 		super(props);
@@ -78,11 +79,7 @@ export default class BankAccountOverview extends Component {
 		this.interval = setInterval(() => 
 		{
 			var hasCreditCardAccount = this.findAccountID("credit-card") !== -1 ? true : false;
-			if (!hasCreditCardAccount)
-			{
-				// alert("No credit card account available. Ignoring request...");
-				return;
-			}
+			if (!hasCreditCardAccount) return;
 
 			//alert("10 seconds have passed. Adding 25% interest to credit card balance...");
 
@@ -93,6 +90,10 @@ export default class BankAccountOverview extends Component {
 			this.state.user.accounts[2].balance = parseFloat(newBalance.toFixed(2));
 			this.setState({ user: this.state.user});
 			this.updateUserInDatabase();
+			
+			creditCardAccountStyle = showAccountStyle;
+			addCreditCardAccountButtonStyle = hiddenStyle;
+
 		}, 10000);	
 	}
 
@@ -132,8 +133,7 @@ export default class BankAccountOverview extends Component {
 		{
 			this.setState({ user: { ...this.state.user, accounts: userAccounts.data} });
 			var hasCreditCardAccount = this.findAccountID("credit-card") !== -1 ? true : false;
-		
-			console.log(this.state.user.accounts);
+	
 			if (hasCreditCardAccount)
 			{
 				console.log("Has account!");
@@ -142,6 +142,7 @@ export default class BankAccountOverview extends Component {
 			}
 			else
 			{
+				console.log("No account!")
 				addCreditCardAccountButtonStyle = "bank-app-buttons";
 				creditCardAccountStyle = hiddenStyle;
 			}	
@@ -208,6 +209,8 @@ export default class BankAccountOverview extends Component {
 			addCreditCardAccountButtonStyle = hiddenStyle;
 			creditCardAccountStyle = showAccountStyle;
 			alert("Already have a credit card account. Ignoring request...");
+			this.getUserAccountsFromDatabase();
+			this.updateUser(this.state.user);
 			return;
 		}
 
