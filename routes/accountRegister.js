@@ -3,15 +3,15 @@ let BankAccount = require('../models/bank-account.model');
 let User = require('../models/user.model');
 
 // Pushes a brand new BankAccount (chequings, savings, credit-card, etc) to the user that has the matching email.
-router.route('/new').post((req, res) =>
+router.route('/new').post(async (req, res) =>
 {
     if (req.body === null || req.body === undefined) return;
-    
+
     const email = req.body.email;
     const accountID = req.body.accType === "credit-card" ? 3990000000000000 + Math.floor(100000000000 + Math.random() * 900000000000) : Math.floor(100000 + Math.random() * 900000)
     const newBankAccount = new BankAccount({id: accountID, accType: req.body.accType});
 
-    User.findOneAndUpdate({email: email})
+    await User.findOne({email: email})
     .then(user =>
         {
             user.accounts.push(newBankAccount);
