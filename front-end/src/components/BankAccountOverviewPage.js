@@ -14,19 +14,34 @@ const showAccountStyle = "bank-account-prefabs";
 
 var chequingsAccountStyle = showAccountStyle;
 var savingsAccountStyle = showAccountStyle;
+var creditCardAccountStyle = hiddenStyle;
 var addBankAccountButtonStyle = "bank-app-buttons";
+var addCreditCardAccountButtonStyle = "bank-app-buttons";
 
 export default class BankAccountOverview extends Component {
-	constructor(props) {
+	constructor(props) 
+	{
 		super(props);
 
 		// When creating a new function, make sure to bind it using this format; otherwise, it will not work.
 		// e.g. this.[functionName] = this.[functionName].bind(this); (remove the square brackets).
 		this.updateUser = this.updateUser.bind(this);
+		this.getUserAccountsFromDatabase = this.getUserAccountsFromDatabase.bind(this);
+		this.findAccountID = this.findAccountID.bind(this);
+		this.findAccountBalance = this.findAccountBalance.bind(this);
+		this.createNewAccount = this.createNewAccount.bind(this);
+
+		// this.updateDepositForAccount = this.updateDepositForAccount.bind(this);
+
 		this.updateDepositForSavingsAccount = this.updateDepositForSavingsAccount.bind(this);
 		this.updateWithdrawForSavingsAccount = this.updateWithdrawForSavingsAccount.bind(this);
+
 		this.updateDepositForchequingAccount = this.updateDepositForchequingAccount.bind(this);
 		this.updateWithdrawForchequingAccount = this.updateWithdrawForchequingAccount.bind(this);
+
+		this.updateDepositForCreditCardAccount = this.updateDepositForCreditCardAccount.bind(this);
+		this.updateWithdrawForCreditCardAccount = this.updateWithdrawForCreditCardAccount.bind(this);
+
 		this.updateUserInDatabase = this.updateUserInDatabase.bind(this);
 
 		// Default state of the variable.
@@ -37,46 +52,200 @@ export default class BankAccountOverview extends Component {
 				firstName: "",
 				lastName: "",
 				email: "",
-				accounts:
-					[
-						{ id: 1, balance: 0 },
-						{ id: 1, balance: 0 }
-					]
+				accounts: []
 			}
 		}
 	}
 
 	// Built-in React function. Gets called after a component is mounted.
-	componentDidMount() {
+	componentDidMount() 
+	{
 		const token = localStorage.getItem('token');
 		var user;
 
 		if (token) user = jwtDecode(token);
-		else {
+		else 
+		{
 			alert("Your session has expired. Redirecting you to the Home Page...");
 			window.location = '/';
 		}
 
-		if (user) this.updateUser(user);
+		if (user) 
+		{
+			this.updateUser(user);
+		}	
+
+		this.interval = setInterval(() => 
+		{
+			var hasCreditCardAccount = this.findAccountID("credit-card") !== -1 ? true : false;
+			if (!hasCreditCardAccount)
+			{
+				// alert("No credit card account available. Ignoring request...");
+				return;
+			}
+
+			//alert("10 seconds have passed. Adding 25% interest to credit card balance...");
+
+			var creditCardBalance = this.findAccountBalance("credit-card");
+			if (creditCardBalance <= 0) return;
+
+			var newBalance = parseFloat(creditCardBalance * 1.05);
+			this.state.user.accounts[2].balance = parseFloat(newBalance.toFixed(2));
+			this.setState({ user: this.state.user});
+			this.updateUserInDatabase();
+		}, 10000);	
+	}
+
+	componentWillUnmount() 
+	{
+		clearInterval(this.interval);
+	}
+
+	componentDidUpdate()
+	{
+		if (this.state.user.accounts && this.state.user.accounts.length > 0) return;
+
+		console.log("Updating...");
+		this.getUserAccountsFromDatabase();
+
+		var hasCreditCardAccount = this.findAccountID("credit-card") === -1 ? false : true;
+
+		if (hasCreditCardAccount)
+		{
+			creditCardAccountStyle = showAccountStyle;
+			addCreditCardAccountButtonStyle = hiddenStyle;
+		}
 	}
 
 	// ADD ALL NEW FUNCTIONS UNDER THIS COMMENT HERE. MAKE SURE TO BIND THE FUNCTION IN THE CONSTRUCTOR.
 	// When calling a function in a HTML tag (div, form, etc), type: {this.[functionName]} (Check the RegisterAccountPage.js script for examples)
 
-	updateUser(newUser) {
-		this.setState({ user: newUser });
+	updateUser(newUser) 
+	{
+		this.setState({ user: newUser});
+		this.getUserAccountsFromDatabase();
 	}
 
-	updateUserInDatabase(e) {
-		e.preventDefault();
+	getUserAccountsFromDatabase()
+	{
+		axios.get(`http://localhost:5000/account/get/${this.state.user.email}`).then(userAccounts =>
+		{
+			this.setState({ user: { ...this.state.user, accounts: userAccounts.data} });
+			var hasCreditCardAccount = this.findAccountID("credit-card") !== -1 ? true : false;
+		
+			console.log(this.state.user.accounts);
+			if (hasCreditCardAccount)
+			{
+				console.log("Has account!");
+				addCreditCardAccountButtonStyle = hiddenStyle;
+				creditCardAccountStyle = showAccountStyle;
+			}
+			else
+			{
+				addCreditCardAccountButtonStyle = "bank-app-buttons";
+				creditCardAccountStyle = hiddenStyle;
+			}	
+		})
+		.catch((err) => alert("Unable to pull user bank accounts from database.\n" + err));		
+	}
+
+	updateUserInDatabase() 
+	{
+		// e.preventDefault();
 
 		axios.post("http://localhost:5000/register/update", this.state.user).then(() => {
 			alert("Data updated.");
 		})
-			.catch((err) => alert("Unable to update balance to database.\n" + err));
+		.catch((err) => alert("Unable to update balance to database.\n" + err));
+
 	}
 
-	updateDepositForSavingsAccount(e) {
+	findAccountID(accType)
+	{
+		// console.log(this.state.user);
+		if (this.state.user.accounts && this.state.user.accounts.length > 0)
+		{
+			for (var i = 0; i < this.state.user.accounts.length; i++)
+			{
+				if (this.state.user.accounts[i] === null || this.state.user.accounts[i] === undefined) continue;
+				if (this.state.user.accounts[i].accType !== accType) continue;
+
+				return this.state.user.accounts[i].id;
+			}
+		}
+
+		return -1;
+	}
+
+	findAccountBalance(accType)
+	{
+		if (this.state.user.accounts && this.state.user.accounts.length > 0)
+		{
+			for (var i = 0; i < this.state.user.accounts.length; i++)
+			{
+				if (this.state.user.accounts[i] === null || this.state.user.accounts[i] === undefined) continue;
+				if (this.state.user.accounts[i].accType !== accType) continue;
+
+				return this.state.user.accounts[i].balance;
+			}
+		}
+
+		return -1;
+	}
+
+	createNewAccount(accountType)
+	{
+		const info = 
+		{
+			email: this.state.user.email, 
+			accType: accountType
+		};
+
+		var hasCreditCardAccount = this.findAccountID("credit-card") === -1 ? false : true;
+
+		if (hasCreditCardAccount)
+		{
+			addCreditCardAccountButtonStyle = hiddenStyle;
+			creditCardAccountStyle = showAccountStyle;
+			alert("Already have a credit card account. Ignoring request...");
+			return;
+		}
+
+		axios.post("http://localhost:5000/account/new", info).then(() =>
+		{
+			alert(accountType + " account added!");
+			addCreditCardAccountButtonStyle = hiddenStyle;
+			creditCardAccountStyle = showAccountStyle;
+			this.getUserAccountsFromDatabase();
+			this.updateUser(this.state.user);
+		})
+		.catch((err) => alert("Unable to add " + accountType + " to user.\n" + err));
+	}
+
+	// updateDepositForAccount(accType)
+	// {
+	// 	return event => 
+	// 	{		
+	// 		event.preventDefault();
+	// 		const depositAmount = event.target.depositAmount.value;
+	// 		console.log("Deposit Amount: " + depositAmount);
+	// 		console.log("Account Type: " + accType);
+
+	// 		event.target.reset();
+
+	// 		if (isNaN(depositAmount))
+	// 		{
+	// 			return alert("Not valid deposit amount.");
+	// 		}
+
+	// 		var accountBalance = this.findAccountBalance(accType);
+	// 		accountBalance += depositAmount;
+	// 	}
+
+	// }
+
+	updateDepositForSavingsAccount(e) 
+	{
 		// Prevent page from reloading
 		e.preventDefault();
 
@@ -94,18 +263,19 @@ export default class BankAccountOverview extends Component {
 		// Get the right account
 		const chequingAccount = this.state.user.accounts[0];
 		const savingsAccount = this.state.user.accounts[1];
+		const creditCardAcc = this.state.user.accounts[2];
 
 		// Update the account balance
 		savingsAccount.balance += depositAmount;
 
 		// Save the data
 		// TODO: Change this to API Call
-		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount] } });
-		this.updateUserInDatabase(e);
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount, creditCardAcc] } });
+		this.updateUserInDatabase();
 	}
 
-	updateWithdrawForSavingsAccount(e) {
-
+	updateWithdrawForSavingsAccount(e) 
+	{
 		// Prevent page from reloading
 		e.preventDefault();
 
@@ -126,17 +296,19 @@ export default class BankAccountOverview extends Component {
 		// Get the right account
 		const chequingAccount = this.state.user.accounts[0];
 		const savingsAccount = this.state.user.accounts[1];
+		const creditCardAcc = this.state.user.accounts[2];
 
 		// Update the account balance
 		savingsAccount.balance -= withdrawAmount;
 
 		// Save the data
 		// TODO: Change this to API Call
-		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount] } });
-		this.updateUserInDatabase(e);
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount, creditCardAcc] } });
+		this.updateUserInDatabase();
 	}
 
-	updateDepositForchequingAccount(e) {
+	updateDepositForchequingAccount(e) 
+	{
 		// Prevent page from reloading
 		e.preventDefault();
 
@@ -147,17 +319,22 @@ export default class BankAccountOverview extends Component {
 		// Reset the form
 		form.reset();
 
+		if (isNaN(depositAmount)) {
+			return alert('Not valid withdraw amount');
+		}
+
 		// Get the right account
 		const chequingAccount = this.state.user.accounts[0];
 		const savingsAccount = this.state.user.accounts[1];
+		const creditCardAcc = this.state.user.accounts[2];
 
 		// Update the account balance
 		chequingAccount.balance += depositAmount;
 
 		// Save the data
 		// TODO: Change this to API Call
-		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount] } });
-		this.updateUserInDatabase(e);
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount, creditCardAcc] } });
+		this.updateUserInDatabase();
 	}
 
 	updateWithdrawForchequingAccount(e) {
@@ -175,23 +352,27 @@ export default class BankAccountOverview extends Component {
 		// Reset the form
 		form.reset();
 
+		if (isNaN(withdrawAmount)) {
+			return alert('Not valid withdraw amount');
+		}
 		// Get the right account
 		const chequingAccount = this.state.user.accounts[0];
 		const savingsAccount = this.state.user.accounts[1];
+		const creditCardAcc = this.state.user.accounts[2];
 
 		// Update the account balance
 		chequingAccount.balance -= withdrawAmount;
 
 		// Save the data
 		// TODO: Change this to API Call
-		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount] } });
-		this.updateUserInDatabase(e);
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount, creditCardAcc] } });
+		this.updateUserInDatabase();
 	}
 
 	calculateAccountTotal() {
 		// Get the right account
-		const chequingAccountBalance = this.state.user?.accounts[0].balance ?? 0;
-		const savingsAccountBalance = this.state.user?.accounts[1].balance ?? 0;
+		const chequingAccountBalance = this.findAccountBalance("chequings");
+		const savingsAccountBalance = this.findAccountBalance("savings")
 
 		const total = chequingAccountBalance + savingsAccountBalance;
 
@@ -199,8 +380,83 @@ export default class BankAccountOverview extends Component {
 		return total.toFixed(2);
 	}
 
+	updateDepositForCreditCardAccount(e) {
+		// Prevent page from reloading
+		e.preventDefault();
+
+		// Extract the value from the form
+		const form = e.target;
+		const depositAmount = e.target.depositAmount.value;
+
+		// Reset the form
+		form.reset();
+
+		if (isNaN(depositAmount)) 
+		{
+			return alert('Not valid withdraw amount');
+		}
+		// Get the right account
+		const chequingAccount = this.state.user.accounts[0];
+		const savingsAccount = this.state.user.accounts[1];
+		const creditCardAcc = this.state.user.accounts[2] === null ? this.state.user.accounts[3] : this.state.user.accounts[2];
+
+		// Update the account balance
+		creditCardAcc.balance += Number(depositAmount);
+		creditCardAcc.balance = Number(creditCardAcc.balance.toFixed(2));
+
+		// Save the data
+		// TODO: Change this to API Call
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount, creditCardAcc] } });
+		this.updateUserInDatabase();
+	}
+
+	updateWithdrawForCreditCardAccount(e) {
+
+		// Prevent page from reloading
+		e.preventDefault();
+
+		// Extract the value from the form
+		const form = e.target;
+
+		// const a = "100";
+		// +a === 100;
+		const withdrawAmount = e.target.withdrawAmount.value;
+
+		// Reset the form
+		form.reset();
+
+		if (isNaN(withdrawAmount)) {
+			return alert('Not valid withdraw amount');
+		}
+
+		console.log(this.state.user.accounts)
+		// Get the right account
+		const chequingAccount = this.state.user.accounts[0];
+		const savingsAccount = this.state.user.accounts[1];
+		const creditCardAcc = this.state.user.accounts[2] === null ? this.state.user.accounts[3] : this.state.user.accounts[2];
+
+		
+		// Update the account balance
+		creditCardAcc.balance -= Number(withdrawAmount);
+		creditCardAcc.balance = Number(creditCardAcc.balance.toFixed(2));
+
+		// Save the data
+		// TODO: Change this to API Call
+		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount, creditCardAcc] } });
+		this.updateUserInDatabase();
+	}
+
+	calculateCreditCardAccountTotal() 
+	{
+		// Get the right account
+		const creditCardBalance = Number(this.findAccountBalance("credit-card"));
+
+		// sets it to two decimal places
+		return Number(creditCardBalance.toFixed(2));
+	}
+
 	render() {
-		return (
+		return(
 
 			<div className="bank-app-div" id="bank-app-overview-container">
 
@@ -214,122 +470,141 @@ export default class BankAccountOverview extends Component {
 					<h3 id="username-heading">{this.state.user.firstName + " " + this.state.user.lastName}</h3>
 				</div>
 
-				<br /><br />
+				<br/><br/>
 
 				{/* <AddBankAccountOverlay open = {isOpen} onClose = {() => setIsOpen(false)} accountAdded = {determineAccountToOpen}/> */}
 
 				<div className="bank-app-div" id="bank-accounts-owned-middle">
-					<h2 className="bank-account-heading">Bank Accounts</h2>
+ 					<h2 className="bank-account-heading">Bank Accounts</h2>
 
-					<div className={savingsAccountStyle} id="bank-account-prefab01">
-						<h3 className="bank-account-prefab-heading" id="bank-account-heading-prefab01">Personal Savings Account</h3>
-						<h3 className="bank-account-prefab-number" id="bank-account-number-prefab01">ID: 399-{this.state.user.accounts[1].id}</h3>
-						<p className="bank-account-prefab-balance" id="bank-account-balance-prefab01"> ${this.state.user.accounts[1].balance}</p>
-					</div>
+					 <br/>
 
-					<div>
-						<form onSubmit={this.updateDepositForSavingsAccount}>
-							<label>Deposit</label>
-							<input type="number" name="deposit-amount" min='10' max='10000' placeholder='$10' />
-							<input type="submit" value="Submit" />
-						</form>
+ 					<div className={savingsAccountStyle} id="bank-account-prefab01">
+ 						<h3 className="bank-account-prefab-heading" id="bank-account-heading-prefab01">Personal Savings Account</h3>
+ 						<h3 className="bank-account-prefab-number" id="bank-account-number-prefab01">ID: 399-{this.findAccountID("savings")}</h3>
+ 						<p className="bank-account-prefab-balance" id="bank-account-balance-prefab01"> ${this.findAccountBalance("savings")}</p>
+ 					</div>
 
-						<form onSubmit={this.updateWithdrawForSavingsAccount}>
-							<label>Withdraw</label>
-							<input type="number" name="withdraw-amount" min='10' max='10000' placeholder='$10' />
-							<input type="submit" value="Submit" />
-						</form>
-					</div>
-					<div class="dropdown">
+ 					<div>
+ 						<form onSubmit={this.updateDepositForSavingsAccount}>
+ 							<label>Deposit</label>
+ 							<input type="number" name = "deposit-amount" min='10' max='10000' placeholder='$10' />
+ 							<input type="submit" value="Submit" />
+ 						</form>
 
-						<button class="dropbtn">View Statements</button>
-						<div class="dropdown-content">
-							<a href="/statementFebruary2022">February 2022</a>
-							<a href="/statementMarch2022">March 2022</a>
-							<a href="/statementApril2022">April 2022</a>
-							<a href="/statementMay2022">May 2022</a>
-							<a href="/statementJune2022">June 2022</a>
-							<a href="/statementJuly2022">July 2022</a>
-							<a href="/statementAugust2022">August 2022</a>
-							<a href="/statementSeptember2022">September 2022</a>
-							<a href="/statementOctober2022">October 2022</a>
-							<a href="/statementNovember2022">November 2022</a>
-							<a href="/statementDecember2022">December 2022</a>
-							<a href="/statementJanuary2023">January 2023</a>
-						</div>
-					</div>
-					<br /><br />
+ 						<form onSubmit={this.updateWithdrawForSavingsAccount}>
+ 							<label>Withdraw</label>
+ 							<input type="number" name = "withdraw-amount" min='10' max='10000' placeholder='$10' />
+ 							<input type="submit" value="Submit" />
+ 						</form>
+ 					</div>
 
-					<div className={chequingsAccountStyle} id="bank-account-prefab02">
-						<h3 className="bank-account-prefab-heading" id="bank-account-heading-prefab02">Everyday Chequings Account</h3>
-						<h3 className="bank-account-prefab-number" id="bank-account-number-prefab02">ID: 399-{this.state.user.accounts[0].id}</h3>
-						<p className="bank-account-prefab-balance" id="bank-account-balance-prefab02"> ${this.state.user.accounts[0].balance} </p>
-					</div>
+					{/* <div className = "bank-account-create-new">
+ 					<button className = {addBankAccountButtonStyle} id = "bank-account-create-new-account-button" type = "button" onClick = {() => setIsOpen(true)}> Add New Account</button>
+ 					</div> */}
+					 <br/>
+ 					<div className="dropdown">
 
-					<div>
-						<form onSubmit={this.updateDepositForchequingAccount}>
-							<label>Deposit</label>
-							<input type="number" name="deposit-amount" min='10' max='10000' placeholder='$10' />
-							<input type="submit" value="Submit" />
-						</form>
+ 						<button className="dropbtn">View Statements</button>
+ 						<div className="dropdown-content">
+ 							<a href="/statementFebruary2022">February 2022</a>
+ 							<a href="/statementMarch2022">March 2022</a>
+ 							<a href="/statementApril2022">April 2022</a>
+ 							<a href="/statementMay2022">May 2022</a>
+ 							<a href="/statementJune2022">June 2022</a>
+ 							<a href="/statementJuly2022">July 2022</a>
+ 							<a href="/statementAugust2022">August 2022</a>
+ 							<a href="/statementSeptember2022">September 2022</a>
+ 							<a href="/statementOctober2022">October 2022</a>
+ 							<a href="/statementNovember2022">November 2022</a>
+ 							<a href="/statementDecember2022">December 2022</a>
+ 							<a href="/statementJanuary2023">January 2023</a>
+ 						</div>
+ 					</div>
 
-						<form onSubmit={this.updateWithdrawForchequingAccount}>
-							<label>Withdraw</label>
-							<input type="number" name="withdraw-amount" min='10' max='10000' placeholder='$10' />
-							<input type="submit" value="Submit" />
-						</form>
-					</div>
-					<div class="dropdown">
+ 					<br/><br/>
 
-						<button class="dropbtn">View Statements</button>
-						<div class="dropdown-content">
-							<a href="/statement2February2022">February 2022</a>
-							<a href="/statement2March2022">March 2022</a>
-							<a href="/statement2April2022">April 2022</a>
-							<a href="/statement2May2022">May 2022</a>
-							<a href="/statement2June2022">June 2022</a>
-							<a href="/statement2July2022">July 2022</a>
-							<a href="/statement2August2022">August 2022</a>
-							<a href="/statement2September2022">September 2022</a>
-							<a href="/statement2October2022">October 2022</a>
-							<a href="/statement2November2022">November 2022</a>
+ 					<div className={chequingsAccountStyle} id="bank-account-prefab02">
+ 						<h3 className="bank-account-prefab-heading" id="bank-account-heading-prefab02">Everyday Chequings Account</h3>
+ 						<h3 className="bank-account-prefab-number" id="bank-account-number-prefab02">ID: 399-{this.findAccountID("chequings")}</h3>
+ 						<p className="bank-account-prefab-balance" id="bank-account-balance-prefab02"> ${this.findAccountBalance("chequings")} </p>
+ 					</div>
+
+ 					<div>
+ 						<form onSubmit={this.updateDepositForchequingAccount}>
+ 							<label>Deposit</label>
+ 							<input type="number" name="deposit-amount" min='10' max='10000' placeholder='$10' />
+ 							<input type="submit" value="Submit" />
+ 						</form>
+
+ 						<form onSubmit={this.updateWithdrawForchequingAccount}>
+ 							<label>Withdraw</label>
+ 							<input type="number" name="withdraw-amount" min='10' max='10000' placeholder='$10' />
+ 							<input type="submit" value="Submit" />
+ 						</form>
+ 					</div>
+
+					 <br/>
+ 					<div className="dropdown">
+ 						<button className="dropbtn">View Statements</button>
+
+ 						<div className="dropdown-content">
+ 							<a href="/statement2February2022">February 2022</a>
+ 							<a href="/statement2March2022">March 2022</a>
+ 							<a href="/statement2April2022">April 2022</a>
+ 							<a href="/statement2May2022">May 2022</a>
+ 							<a href="/statement2June2022">June 2022</a>
+ 							<a href="/statement2July2022">July 2022</a>
+ 							<a href="/statement2August2022">August 2022</a>
+ 							<a href="/statement2September2022">September 2022</a>
+ 							<a href="/statement2October2022">October 2022</a>
+ 							<a href="/statement2November2022">November 2022</a>
 							<a href="/statement2December2022">December 2022</a>
 							<a href="/statement2January2023">January 2023</a>
 						</div>
-					</div>
-					<br />
-					{/* <div className = "bank-account-create-new">
-						<button className = {addBankAccountButtonStyle} id = "bank-account-create-new-account-button" type = "button" onClick = {() => setIsOpen(true)}> Add New Account</button>
-					</div> */}
+ 					</div>
 
+					<br/><br/>
 					<div className="bank-account-balance-total">
 						<h3 className="bank-account-balance-total-title">TOTAL: </h3>
-						<p className="bank-account-balance-total-amount"> ${this.calculateAccountTotal()} </p>
-					</div>
-				</div>
+ 						<p className="bank-account-balance-total-amount"> ${this.calculateAccountTotal()} </p>
+ 					</div>
+			</div>
 
-				<br></br> <br></br>
+			<br></br> <br></br>
+			<div className="bank-app-div" id="credit-cards-owned-bottom">
+ 					<h2 className="bank-account-heading">Credit Cards</h2>
+					<br/>
+ 					<div className = {creditCardAccountStyle} id="credit-account-prefab01">
+ 						<h3 className="bank-account-prefab-heading" id="credit-account-heading-prefab01">Standard Credit Card</h3>
+ 						<h3 className="bank-account-prefab-number" id="credit-account-number-prefab01">{this.findAccountID("credit-card")}</h3>
+ 						<p className="bank-account-prefab-balance" id="credit-account-balance-prefab01"> ${this.findAccountBalance("credit-card")}</p>
+ 					</div>
 
-				<div className="bank-app-div" id="credit-cards-owned-bottom">
-					<h2 className="bank-account-heading">Credit Cards</h2>
+					<div className = {creditCardAccountStyle}>
+ 						<form onSubmit={this.updateDepositForCreditCardAccount}>
+ 							<label>Charge</label>
+ 							<input type="number" name="depositAmount" min='1' max='10000' placeholder='$1' />
+ 							<input type="submit" value="Submit" />
+ 						</form>
 
-					<div className="bank-account-prefabs" id="credit-account-prefab01">
-						<h3 className="bank-account-prefab-heading" id="credit-account-heading-prefab01">Standard Credit Card</h3>
-						<h3 className="bank-account-prefab-number" id="credit-account-number-prefab01">#### #### #### ####</h3>
-						<p className="bank-account-prefab-balance" id="credit-account-balance-prefab01"> $###.## </p>
-					</div>
+ 						<form onSubmit={this.updateWithdrawForCreditCardAccount}>
+ 							<label>Pay Off</label>
+ 							<input type="number" name="withdrawAmount" min='1' max='10000' placeholder='$1' />
+ 							<input type="submit" value="Submit" />
+ 						</form>
+ 					</div>
 
-					<br />
+ 					<div className="bank-account-create-new">
+ 						<button className = {addCreditCardAccountButtonStyle} id="bank-account-create-new-account-button" type="button" onClick={() => this.createNewAccount("credit-card")}> 
+						Add New Account</button>
+ 					</div>
 
-					<div className="bank-account-create-new">
-						<button className="bank-app-buttons" id="bank-account-create-new-account-button" type="button"> Add New Account</button>
-					</div>
-
-					<div className="bank-account-balance-total">
-						<h3 className="bank-account-balance-total-title">TOTAL: </h3>
-						<p className="bank-account-balance-total-amount">$0.00</p>
-					</div>
-				</div>
+ 					<div className="bank-account-balance-total">
+ 						<h3 className="bank-account-balance-total-title">TOTAL: </h3>
+ 						<p className="bank-account-balance-total-amount">${this.calculateCreditCardAccountTotal() === -1 ? "0" : this.calculateCreditCardAccountTotal()}</p>
+ 					</div>
+ 				</div>
 			</div>
 		);
 	}

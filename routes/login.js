@@ -23,7 +23,7 @@ router.route('/').post(async (req, res) =>
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                accounts: user.accounts
+                // accounts: user.accounts
             }, 'v6jmSuatYPw5Njr6r4ANWWQq')
 
         return res.json({success: true, user: token})

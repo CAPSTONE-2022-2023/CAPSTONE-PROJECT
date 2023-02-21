@@ -32,6 +32,9 @@ app.use('/register', registerRouter);
 const loginRouter = require('./routes/login');
 app.use('/login', loginRouter);
 
+const accountRegisterRouter = require('./routes/accountRegister');
+app.use('/account', accountRegisterRouter);
+
 if (process.env.NODE_ENV === "production")
 {
     app.use(express.static(path.join(__dirname, '/front-end/build')));

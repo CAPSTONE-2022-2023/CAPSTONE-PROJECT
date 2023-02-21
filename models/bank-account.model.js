@@ -34,7 +34,7 @@ const bankAccountSchema = new Schema
         type: Number,
         required: false,
         unique: false,
-        min: 0,
+        min: -99999999,
         max: 999999999,
         default: 0,
         validate: 
