@@ -45,6 +45,11 @@ export default class BankAccountOverview extends Component
 
 		this.updateUserInDatabase = this.updateUserInDatabase.bind(this);
 
+		this.depositChequeForSavingsAccount = this.depositChequeForSavingsAccount.bind(this);
+		this.depositChequeForChequingAccount = this.depositChequeForChequingAccount.bind(this); 
+
+		this.findChequeId = this.findChequeId.bind(this);
+
 		// Default state of the variable.
 		this.state =
 		{
@@ -413,6 +418,50 @@ export default class BankAccountOverview extends Component
 		this.updateUserInDatabase();
 	}
 
+	// This function will call the `/transfer` endpoint
+	// and transfer the amount from the source account to the destination account
+	// and given the accountType, it will find the account ID
+	depositChequeForSavingsAccount (e) {
+		e.preventDefault();
+		const form = e.target;
+		const formData = Object.fromEntries (new FormData(form));
+
+		form.reset();
+
+		const account = this.findAccountID("savings");
+		const depositAmount = formData['deposit-amount'];
+		const chequeId = formData['cheque-id'];
+		
+		axios.post('http://localhost:5000/register/transfer', {
+			chequeId: chequeId,
+			accountId: account,
+			amount: +depositAmount
+		}).then((response) => {
+			// TODO: UPDATE THE USER STATE
+			this.setState({ user: { ...this.state.user, ...response.data.user }});
+		});
+	}
+
+	depositChequeForChequingAccount (e) {
+		e.preventDefault();
+		const form = e.target;
+		const formData = Object.fromEntries (new FormData(form));
+
+		form.reset();
+
+		const account = this.findAccountID("savings");
+		const depositAmount = formData['deposit-amount'];
+		const chequeId = formData['cheque-id'];
+
+		axios.post('http://localhost:5000/register/transfer', {
+			chequeId: chequeId,
+			accountId: account,
+			amount: +depositAmount
+		}).then((response) => {
+			this.setState({ user: { ...this.state.user, ...response.data.user }});
+		});
+	}
+
 	updateWithdrawForCreditCardAccount(e) {
 
 		// Prevent page from reloading
@@ -458,6 +507,23 @@ export default class BankAccountOverview extends Component
 		return Number(creditCardBalance.toFixed(2));
 	}
 
+	findChequeId(accType) {
+		// console.log(this.state.user);
+		if (this.state.user.accounts && this.state.user.accounts.length > 0)
+		{
+			for (var i = 0; i < this.state.user.accounts.length; i++)
+			{
+				if (this.state.user.accounts[i] === null || this.state.user.accounts[i] === undefined) continue;
+				if (this.state.user.accounts[i].accType !== accType) continue;
+
+				return this.state.user.accounts[i].chequeId;
+			}
+		}
+
+		return -1;
+		
+	}
+
 	render() {
 		return(
 
@@ -485,6 +551,7 @@ export default class BankAccountOverview extends Component
  					<div className={savingsAccountStyle} id="bank-account-prefab01">
  						<h3 className="bank-account-prefab-heading" id="bank-account-heading-prefab01">Personal Savings Account</h3>
  						<h3 className="bank-account-prefab-number" id="bank-account-number-prefab01">ID: 399-{this.findAccountID("savings")}</h3>
+ 						<h3 className="bank-account-prefab-number" id="bank-account-number-prefab01">Cheque ID: {this.findChequeId("savings")}</h3>
  						<p className="bank-account-prefab-balance" id="bank-account-balance-prefab01"> ${this.findAccountBalance("savings")}</p>
  					</div>
 
@@ -501,6 +568,16 @@ export default class BankAccountOverview extends Component
  							<input type="submit" value="Submit" />
  						</form>
  					</div>
+					 <form onSubmit={this.depositChequeForSavingsAccount}>
+ 							<label>Deposit a cheque</label>
+ 							<input type="text" name = "cheque-id" placeholder='Cheque ID' />
+							<input type="number" name = "deposit-amount" min='10' max='10000' placeholder='$' />
+ 							<input type="submit" value="Submit" />
+ 						</form>
+
+					<div>
+
+					</div>
 
 					{/* <div className = "bank-account-create-new">
  					<button className = {addBankAccountButtonStyle} id = "bank-account-create-new-account-button" type = "button" onClick = {() => setIsOpen(true)}> Add New Account</button>
@@ -530,6 +607,7 @@ export default class BankAccountOverview extends Component
  					<div className={chequingsAccountStyle} id="bank-account-prefab02">
  						<h3 className="bank-account-prefab-heading" id="bank-account-heading-prefab02">Everyday Chequings Account</h3>
  						<h3 className="bank-account-prefab-number" id="bank-account-number-prefab02">ID: 399-{this.findAccountID("chequings")}</h3>
+						 <h3 className="bank-account-prefab-number" id="bank-account-number-prefab01">Cheque ID: {this.findChequeId("chequings")}</h3>
  						<p className="bank-account-prefab-balance" id="bank-account-balance-prefab02"> ${this.findAccountBalance("chequings")} </p>
  					</div>
 
@@ -546,6 +624,15 @@ export default class BankAccountOverview extends Component
  							<input type="submit" value="Submit" />
  						</form>
  					</div>
+
+					 <div>
+					 <form onSubmit={this.depositChequeForChequingAccount}>
+ 							<label>Deposit a cheque</label>
+ 							<input type="number" name = "deposit-amount" placeholder='Cheque ID' />
+							 <input type="number" name = "deposit-amount" min='10' max='10000' placeholder='$' />
+ 							<input type="submit" value="Submit" />
+ 						</form>
+						</div>
 
 					 <br/>
  					<div className="dropdown">
