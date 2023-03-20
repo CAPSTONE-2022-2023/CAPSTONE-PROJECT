@@ -19,10 +19,11 @@ router.route('/add').post((req, res) =>
     const lastName = req.body.lastName;
     const email = req.body.email;
     const password = req.body.password;
+    const chequeId = Math.floor(100000 + Math.random() * 900000);
     const accounts = 
     [
-        new BankAccount({id: Math.floor(100000 + Math.random() * 900000)}),
-        new BankAccount({id: Math.floor(100000 + Math.random() * 900000), accType: "savings"})
+        new BankAccount({id: Math.floor(100000 + Math.random() * 900000), chequeId: `${chequeId}-1`}),
+        new BankAccount({id: Math.floor(100000 + Math.random() * 900000), chequeId: `${chequeId}-2`, accType: "savings"})
     ]
 
     const newUser = new User(
@@ -90,4 +91,43 @@ router.route('/update').post((req, res) =>
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
+// Transfer money from one account to another using ChequeID. 
+router.route('/transfer').post(async (req, res) =>
+{   
+    // Find the user whos account contains the chequeID.
+    const senderUser = await User.find({accounts: {$elemMatch: {chequeId: req.body.chequeId}}});
+    // Find the user whos receiving the money by the account Id
+    const receiverUser = await User.find({accounts: {$elemMatch: {id: req.body.accountId}}});
+
+    if (senderUser.length === 0 || receiverUser.length === 0) {
+        res.status(400).json('Error: User not found');
+    }
+    // Find the account that contains the chequeID.
+    const senderAccount = senderUser[0].accounts.find(account => account.chequeId === req.body.chequeId);
+    // Find the account that contains the accountId.
+    const receiverAccount = receiverUser[0].accounts.find(account => account.id === req.body.accountId);
+
+    if (senderAccount === undefined || receiverAccount === undefined) {
+        res.status(400).json('Error: Account not found');
+    }
+
+    // Check if the sender has enough money to transfer.
+    if (senderAccount.balance < req.body.amount)
+    {
+        res.status(400).json('Error: Insufficient funds');
+    }
+    else
+    {
+        // Update the sender's account balance.
+        senderAccount.balance -= req.body.amount;
+        // Update the receiver's account balance.
+        receiverAccount.balance += req.body.amount;
+
+        // Save the changes to the database.
+        senderUser[0].save();
+        receiverUser[0].save();
+
+        res.json({ user: receiverUser[0] });
+    }
+});
 module.exports = router;

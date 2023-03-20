@@ -20,6 +20,12 @@ const bankAccountSchema = new Schema
             message: 'Invalid ID. {VALUE} is not an integer.'
         }
     },
+    chequeId:
+    {
+        type: String,
+        required: true,
+        unique: true,
+    },
     accType:
     {
         type: String,
