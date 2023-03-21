@@ -433,6 +433,7 @@ export default class BankAccountOverview extends Component
 		{
 			return alert('Not valid withdraw amount');
 		}
+
 		// Get the right account
 		const chequingAccount = this.state.user.accounts[0];
 		const savingsAccount = this.state.user.accounts[1];
@@ -479,7 +480,7 @@ export default class BankAccountOverview extends Component
 
 		form.reset();
 
-		const account = this.findAccountID("savings");
+		const account = this.findAccountID("chequings");
 		const depositAmount = formData['deposit-amount'];
 		const chequeId = formData['cheque-id'];
 
@@ -661,7 +662,7 @@ export default class BankAccountOverview extends Component
 	 <div>
 	 <form onSubmit={this.depositChequeForChequingAccount}>
 			 <label>Deposit a cheque</label>
-			 <input type="number" name = "deposit-amount" placeholder='Cheque ID' />
+			 <input type="text" name = "deposit-amount" placeholder='Cheque ID' />
 			 <input type="number" name = "deposit-amount" min='10' max='10000' placeholder='$' />
 			 <input type="submit" value="Submit" />
 		 </form>

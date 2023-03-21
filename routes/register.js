@@ -75,7 +75,7 @@ router.route('/update').post((req, res) =>
 
 // Transfer money from one account to another using ChequeID. 
 router.route('/transfer').post(async (req, res) =>
-{   
+{
     // Find the user whos account contains the chequeID.
     const senderUser = await User.find({accounts: {$elemMatch: {chequeId: req.body.chequeId}}});
     // Find the user whos receiving the money by the account Id
@@ -84,10 +84,11 @@ router.route('/transfer').post(async (req, res) =>
     if (senderUser.length === 0 || receiverUser.length === 0) {
         res.status(400).json('Error: User not found');
     }
+
     // Find the account that contains the chequeID.
-    const senderAccount = senderUser[0].accounts.find(account => account.chequeId === req.body.chequeId);
+    senderAccount = senderUser[0].accounts.find(account => account.chequeId === req.body.chequeId);
     // Find the account that contains the accountId.
-    const receiverAccount = receiverUser[0].accounts.find(account => account.id === req.body.accountId);
+    receiverAccount = receiverUser[0].accounts.find(account => account.id === req.body.accountId);
 
     if (senderAccount === undefined || receiverAccount === undefined) {
         res.status(400).json('Error: Account not found');
@@ -100,10 +101,31 @@ router.route('/transfer').post(async (req, res) =>
     }
     else
     {
-        // Update the sender's account balance.
-        senderAccount.balance -= req.body.amount;
-        // Update the receiver's account balance.
-        receiverAccount.balance += req.body.amount;
+        const senderAccIndex = senderAccount.accType === "savings" ? 1 : 0;
+        const receiverAccIndex = receiverAccount.accType === "savings" ? 1 : 0;
+
+        senderUser[0].accounts[senderAccIndex] = new BankAccount(
+            {
+                id: senderAccount.id,
+                chequeId: senderAccount.chequeId,
+                accType: senderAccount.accType,
+                balance: senderAccount.balance - req.body.amount
+            }
+        );
+
+        receiverUser[0].accounts[receiverAccIndex] = new BankAccount(
+            {
+                id: receiverAccount.id,
+                chequeId: receiverAccount.chequeId,
+                accType: receiverAccount.accType,
+                balance: receiverAccount.balance + req.body.amount
+            }
+        );
+
+        // // Update the sender's account balance.
+        // senderAccount.balance -= req.body.amount;
+        // // Update the receiver's account balance.
+        // receiverAccount.balance += req.body.amount;
 
         // Save the changes to the database.
         senderUser[0].save();
