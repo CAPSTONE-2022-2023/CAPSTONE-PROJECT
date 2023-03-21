@@ -167,8 +167,8 @@ export default class BankAccountOverview extends Component
 
 		const dataToSend = 
 		{
-			email: recipientEmail,
-			amount: value
+			email: String(recipientEmail),
+			amount: Number(value)
 		};
 
 		axios.post(`http://localhost:5000/bank/sendMoney/${this.state.user.email}`, dataToSend)
@@ -178,7 +178,7 @@ export default class BankAccountOverview extends Component
 				window.location = '/bankAccountOverview';
 
 			}
-		).catch((err) => alert("Error: " + err));
+		).catch((err) => alert("Error! No user with that email can be found.\n" + err));
 		
 		console.log(recipientEmail);
 		console.log(value);

@@ -49,11 +49,11 @@ router.route('/sendMoney/:email').post(async (req, res) =>
 
                     user.save();
                     recipient.save().then(() => res.json(user.firstName + " has sent $" + req.body.amount + " to " + recipient.firstName))
-                    .catch((err) => res.status(400).json("Error: " + err));
+                    .catch(err => res.status(400).json('Error: ' + err));
 
-                }).catch((err) => res.status(400).json("Error: " + err));
+                }).catch(err => res.status(400).json('Error: ' + err));
             
-        }).catch((err) => res.status(400).json("Error: " + err));
+        }).catch(err => res.status(400).json('Error: ' + err));
 });
 
 module.exports = router;
