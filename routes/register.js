@@ -81,6 +81,9 @@ router.route('/transfer').post(async (req, res) =>
     // Find the user whos receiving the money by the account Id
     const receiverUser = await User.find({accounts: {$elemMatch: {id: req.body.accountId}}});
 
+    console.log(senderUser);
+    console.log(receiverUser);
+    
     if (senderUser.length === 0 || receiverUser.length === 0) {
         res.status(400).json('Error: User not found');
     }

@@ -662,7 +662,7 @@ export default class BankAccountOverview extends Component
 	 <div>
 	 <form onSubmit={this.depositChequeForChequingAccount}>
 			 <label>Deposit a cheque</label>
-			 <input type="text" name = "deposit-amount" placeholder='Cheque ID' />
+			 <input type="text" name = "cheque-id" placeholder='Cheque ID' />
 			 <input type="number" name = "deposit-amount" min='10' max='10000' placeholder='$' />
 			 <input type="submit" value="Submit" />
 		 </form>
