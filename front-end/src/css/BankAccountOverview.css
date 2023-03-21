@@ -58,6 +58,16 @@
 	display: inline-block;
 	float: right;
 }
+
+#bank-account-options
+{
+	background: white;
+	position: relative;
+	float: left;
+	left: 95px;
+	top: 200px;
+}
+
 table {
 	font-family: arial, sans-serif;
 	border-collapse: collapse;
