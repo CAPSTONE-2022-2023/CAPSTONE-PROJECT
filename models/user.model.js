@@ -65,7 +65,7 @@ const userSchema = new Schema
         type: Schema.Types.Array,
         ref: 'BankAccount'
     }
-
+    
 },
 {
     timestamps: true,
