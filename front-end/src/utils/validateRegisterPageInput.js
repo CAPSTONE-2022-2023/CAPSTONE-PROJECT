@@ -56,9 +56,9 @@ const validateRegisterPageInput = (user) =>
         fieldInputErrors.password = "Error! Password cannot be left blank.";
         isDataValid = false;
     }
-    else if (!validator.isLength(user.password, {min: 12, max:24}))
+    else if (!validator.isLength(user.password, {min: 8, max:24}))
     {
-        fieldInputErrors.password = "Error! Password must be between 12 and 24 characters."
+        fieldInputErrors.password = "Error! Password must be between 8 and 24 characters."
         isDataValid = false;
     }
     else if (!validator.equals(user.password, user.confirmPassword))

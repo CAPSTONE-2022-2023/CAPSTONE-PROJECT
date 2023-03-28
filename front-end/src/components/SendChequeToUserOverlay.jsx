@@ -34,10 +34,10 @@ const SendChequeToUserOverlay = ({ onClose, open }) => {
                     <input type="text" value={chequeId} onChange={(e) => setchequeId(e.target.value)} placeholder='Cheque ID' />
                     <br /><br /><br />
                     <label>Page #: </label>
-                    <input type="number" name="page #" value={page} onChange={(e) => setpage(e.target.value)} min='10' max='100' placeholder='Minimum #1' />
+                    <input type="number" name="page #" value={page} onChange={(e) => setpage(e.target.value)} min='1' max='100' placeholder='Minimum #1' />
                     <br /><br /><br />
                     <label>Amount: </label>
-                    <input type="number" name="deposit-amount" value={amount} onChange={(e) => setamount(e.target.value)} min='10' max='10000' placeholder='Minimum of $10' />
+                    <input type="number" name="deposit-amount" value={amount} onChange={(e) => setamount(e.target.value)} min='10' max='10000' placeholder='Minimum of $1' />
                     <br /><br /><br />
                     <button type="submit" className="bank-app-buttons" id="overlayButton-openAccount" onClick={async () => {
                       try {
