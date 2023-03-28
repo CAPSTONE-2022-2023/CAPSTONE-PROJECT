@@ -71,7 +71,7 @@ router.route('/depositcheque').post(async (req, res) => {
         }
         const Cheq=await Cheqbook.findOne({user_id:userone._id,page});
         if(Cheq.used===true){
-            return res.status(404).json({ message: 'Page Already Used' });
+            return res.status(404).json({ message: 'Cheque has already been deposited' });
         }
         let userAccount;
         userone.accounts.forEach(element => {
@@ -83,7 +83,7 @@ router.route('/depositcheque').post(async (req, res) => {
             return res.status(404).json({ message: 'Account not found' });
         }
         if (userAccount.balance < amount) {
-            return res.status(400).json({ message: 'Insufficient balance of Cheque' });
+            return res.status(400).json({ message: 'Insufficient balance of account' });
         }
         userAccount.balance -= Number(amount);
         const myAccount = me.accounts.find(account => account?.accType === accountType);

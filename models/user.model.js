@@ -57,7 +57,7 @@ const userSchema = new Schema
         required: true,
         unique: false,
         trim: true,
-        minlength: 12
+        minlength: 8
     },
     accounts:
     {
