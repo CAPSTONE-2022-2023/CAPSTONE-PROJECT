@@ -50,6 +50,13 @@
 	float: right;
 }
 
+#bank-account-transactionButton
+{
+	padding: 7px 15px;
+	height:2em;
+	width:10em;
+}
+
 #username-heading
 {
 	position: relative;
