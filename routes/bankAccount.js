@@ -4,7 +4,7 @@ let BankAccount = require('../models/bank-account.model');
 let Cheqbook = require('../models/cheqbook.js');
 
 let User = require('../models/user.model');
-
+const Transaction = require('../models/transaction.model');
 
 router.route('/sendMoney/:email').post(async (req, res) => {
     if (req.body === null || req.body === undefined) {
@@ -52,6 +52,42 @@ router.route('/sendMoney/:email').post(async (req, res) => {
 
         }).catch(err => res.status(400).json('Error: ' + err));
 });
+
+
+router.route('/addTrans').post(async (req, res) =>
+{
+    if (req.body === null || req.body === undefined) return;
+
+    const email = req.body.email;
+    const accType = req.body.accType;
+    const transType = req.body.transType;
+    const isDeduct = req.body.isDeduct;
+    const amount = req.body.amount;
+
+    const newTransaction = new Transaction({email: email, accType: accType, transType: transType, isDeduct: isDeduct, amount: amount})
+    newTransaction.save().then(() => res.json("Added a " + transType + " transaction to the " + accType + " account."))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+router.route('/getTrans').get((req, res) => 
+{
+    Transaction.find().then(trans => res.json(trans))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/deleteTrans/:id').delete((req, res) => 
+{
+    Transaction.findByIdAndDelete(req.params.id)
+        .then(() => res.json('Transaction deleted!'))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/deleteTrans').delete((req, res) =>
+{
+    Transaction.deleteMany().then(() => res.json("All transaction data deleted!"))
+    .catch(err => res.status(400).json("Error: " + err));
+});
+
 router.route('/depositcheque').post(async (req, res) => {
     try {
         const token = req.header('token');

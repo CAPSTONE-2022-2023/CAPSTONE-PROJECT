@@ -2,6 +2,8 @@ import React, { Component, useEffect, useState } from 'react';
 import AddBankAccountOverlay from './AddBankAccountOverlay';
 import SendMoneyToUserOverlay from './SendMoneyToUserOverlay';
 import SendChequeToUserOverlay from './SendChequeToUserOverlay.jsx';
+import ViewTransactionsOverlay from './ViewTransactionsOverlay';
+
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
@@ -49,10 +51,13 @@ export default class BankAccountOverview extends Component {
 
 		this.depositChequeForSavingsAccount = this.depositChequeForSavingsAccount.bind(this);
 		this.depositChequeForChequingAccount = this.depositChequeForChequingAccount.bind(this);
+		this.getAccountTransactions = this.getTransactions.bind(this);
+		this.postSelectAccountTransactions = this.postSelectAccountTransactions.bind(this);
 
 		this.findChequeId = this.findChequeId.bind(this);
 		this.isOverlayOpen = this.isOverlayOpen.bind(this);
 		this.isOverlayOpen2 = this.isOverlayOpen2.bind(this);
+		this.isTransOverlayOpen = this.isTransOverlayOpen.bind(this);
 		this.sendMoneyToUser = this.sendMoneyToUser.bind(this);
 
 		// Default state of the variable.
@@ -66,7 +71,10 @@ export default class BankAccountOverview extends Component {
 				accounts: []
 			},
 			isOpen: false,
-			isOpen2: false
+			isOpen2: false,
+			isTransOverlayOpen: false,
+			viewTransAccountType: "",
+			transactions: []
 		}
 	}
 
@@ -83,6 +91,7 @@ export default class BankAccountOverview extends Component {
 
 		if (user) {
 			this.updateUser(user);
+			this.getTransactions();
 		}
 
 		this.interval = setInterval(() => {
@@ -94,8 +103,10 @@ export default class BankAccountOverview extends Component {
 			var creditCardBalance = this.findAccountBalance("credit-card");
 			if (creditCardBalance <= 0) return;
 
-			var newBalance = parseFloat(creditCardBalance * 1.05);
+			var newBalance = parseFloat(creditCardBalance * 1.02);
 			this.state.user.accounts[2].balance = parseFloat(newBalance.toFixed(2));
+
+			this.postSelectAccountTransactions(this.state.user.email, 'credit-card', 'interest', false, parseFloat((creditCardBalance * 0.02).toFixed(2)));
 			this.setState({ user: this.state.user });
 			this.updateUserInDatabase();
 
@@ -134,9 +145,46 @@ export default class BankAccountOverview extends Component {
 	isOverlayOpen(value) {
 		this.setState({ isOpen: value });
 	}
+
 	isOverlayOpen2(value) {
 		this.setState({ isOpen2: value });
 	}
+
+	isTransOverlayOpen(value, accType)
+	{
+		this.getTransactions();
+		this.setState({isTransOverlayOpen: value});
+		this.setState({viewTransAccountType: accType})
+	}
+
+	getTransactions()
+	{
+		axios.get("http://localhost:5000/bank/getTrans").then(allTransactions =>
+		{
+			this.setState({transactions: allTransactions});
+			console.log(this.state.transactions)
+		});
+	}
+
+	postSelectAccountTransactions(email, accType, transType, isDeduct, amount)
+	{
+		const transInfo = 
+		{
+			email: email,
+			accType: accType,
+			transType: transType,
+			isDeduct: isDeduct,
+			amount: amount
+		}
+
+		axios.post("http://localhost:5000/bank/addTrans", transInfo).then(() => 
+		{
+			this.getTransactions();
+			console.log("Success!")
+		})
+		.catch((err) => alert("Unable to upload transaction.\n" + err));
+	}
+
 	sendMoneyToUser(recipientEmail, value) {
 		if (validator.isEmpty(recipientEmail) || recipientEmail.indexOf(' ') >= 0) {
 			return alert("Error! Recipient email cannot be left blank.");
@@ -170,6 +218,9 @@ export default class BankAccountOverview extends Component {
 
 		console.log(recipientEmail);
 		console.log(value);
+
+		this.postSelectAccountTransactions(this.state.user.email, "chequings", recipientEmail, true, dataToSend.amount);
+		this.postSelectAccountTransactions(recipientEmail, "chequings", this.state.user.email, false, dataToSend.amount);
 	}
 
 	getUserAccountsFromDatabase() {
@@ -228,6 +279,7 @@ export default class BankAccountOverview extends Component {
 		return -1;
 	}
 
+
 	createNewAccount(accountType) {
 		const info =
 		{
@@ -279,6 +331,8 @@ export default class BankAccountOverview extends Component {
 		// Update the account balance
 		savingsAccount.balance += depositAmount;
 
+		this.postSelectAccountTransactions(this.state.user.email, 'savings', 'deposit', false, depositAmount);
+
 		// Save the data
 		// TODO: Change this to API Call
 		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount, creditCardAcc] } });
@@ -311,6 +365,8 @@ export default class BankAccountOverview extends Component {
 		// Update the account balance
 		savingsAccount.balance -= withdrawAmount;
 
+		this.postSelectAccountTransactions(this.state.user.email, 'savings', 'withdraw', true, withdrawAmount);
+
 		// Save the data
 		// TODO: Change this to API Call
 		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount, creditCardAcc] } });
@@ -339,6 +395,8 @@ export default class BankAccountOverview extends Component {
 
 		// Update the account balance
 		chequingAccount.balance += depositAmount;
+
+		this.postSelectAccountTransactions(this.state.user.email, 'chequings', 'deposit', false, depositAmount);
 
 		// Save the data
 		// TODO: Change this to API Call
@@ -371,6 +429,8 @@ export default class BankAccountOverview extends Component {
 
 		// Update the account balance
 		chequingAccount.balance -= withdrawAmount;
+
+		this.postSelectAccountTransactions(this.state.user.email, 'chequings', 'withdraw', true, withdrawAmount);
 
 		// Save the data
 		// TODO: Change this to API Call
@@ -413,54 +473,11 @@ export default class BankAccountOverview extends Component {
 		creditCardAcc.balance += Number(depositAmount);
 		creditCardAcc.balance = Number(creditCardAcc.balance.toFixed(2));
 
+		this.postSelectAccountTransactions(this.state.user.email, 'credit-card', 'charged', false, Number(depositAmount));
 		// Save the data
 		// TODO: Change this to API Call
 		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount, creditCardAcc] } });
 		this.updateUserInDatabase();
-	}
-
-	// This function will call the `/transfer` endpoint
-	// and transfer the amount from the source account to the destination account
-	// and given the accountType, it will find the account ID
-	depositChequeForSavingsAccount(e) {
-		e.preventDefault();
-		const form = e.target;
-		const formData = Object.fromEntries(new FormData(form));
-
-		form.reset();
-
-		const account = this.findAccountID("savings");
-		const depositAmount = formData['deposit-amount'];
-		const chequeId = formData['cheque-id'];
-
-		axios.post('http://localhost:5000/register/transfer', {
-			chequeId: chequeId,
-			accountId: account,
-			amount: +depositAmount
-		}).then((response) => {
-			// TODO: UPDATE THE USER STATE
-			this.setState({ user: { ...this.state.user, ...response.data.user } });
-		});
-	}
-
-	depositChequeForChequingAccount(e) {
-		e.preventDefault();
-		const form = e.target;
-		const formData = Object.fromEntries(new FormData(form));
-
-		form.reset();
-
-		const account = this.findAccountID("chequings");
-		const depositAmount = formData['deposit-amount'];
-		const chequeId = formData['cheque-id'];
-
-		axios.post('http://localhost:5000/register/transfer', {
-			chequeId: chequeId,
-			accountId: account,
-			amount: +depositAmount
-		}).then((response) => {
-			this.setState({ user: { ...this.state.user, ...response.data.user } });
-		});
 	}
 
 	updateWithdrawForCreditCardAccount(e) {
@@ -493,10 +510,63 @@ export default class BankAccountOverview extends Component {
 		creditCardAcc.balance -= Number(withdrawAmount);
 		creditCardAcc.balance = Number(creditCardAcc.balance.toFixed(2));
 
+		this.postSelectAccountTransactions(this.state.user.email, 'credit-card', 'paid', true, withdrawAmount);
+
 		// Save the data
 		// TODO: Change this to API Call
 		this.setState({ user: { ...this.state.user, accounts: [chequingAccount, savingsAccount, creditCardAcc] } });
 		this.updateUserInDatabase();
+	}
+
+	// This function will call the `/transfer` endpoint
+	// and transfer the amount from the source account to the destination account
+	// and given the accountType, it will find the account ID
+	depositChequeForSavingsAccount(e) {
+		e.preventDefault();
+		const form = e.target;
+		const formData = Object.fromEntries(new FormData(form));
+
+		form.reset();
+
+		const account = this.findAccountID("savings");
+		const depositAmount = formData['deposit-amount'];
+		const chequeId = formData['cheque-id'];
+
+		axios.post('http://localhost:5000/register/transfer', {
+			chequeId: chequeId,
+			accountId: account,
+			amount: +depositAmount
+		}).then((response) => {
+			// TODO: UPDATE THE USER STATE
+			this.setState({ user: { ...this.state.user, ...response.data.user } });
+			this.postSelectAccountTransactions(this.state.user.email, 'savings', 'cheque', false, depositAmount);
+			this.postSelectAccountTransactions(response.data.user.email, 'savings', 'cheque', true, depositAmount);
+		});
+
+		
+	}
+
+	depositChequeForChequingAccount(e) {
+		e.preventDefault();
+		const form = e.target;
+		const formData = Object.fromEntries(new FormData(form));
+
+		form.reset();
+
+		const account = this.findAccountID("chequings");
+		const depositAmount = formData['deposit-amount'];
+		const chequeId = formData['cheque-id'];
+
+		
+		axios.post('http://localhost:5000/register/transfer', {
+			chequeId: chequeId,
+			accountId: account,
+			amount: +depositAmount
+		}).then((response) => {
+			this.setState({ user: { ...this.state.user, ...response.data.user } });
+			this.postSelectAccountTransactions(this.state.user.email, 'chequings', 'cheque', false, depositAmount);
+			this.postSelectAccountTransactions(response.data.user.email, 'chequings', 'cheque', true, depositAmount);
+		});
 	}
 
 	calculateCreditCardAccountTotal() {
@@ -525,7 +595,7 @@ export default class BankAccountOverview extends Component {
 	render() {
 		return (
 			<>
-				<div class="bank-app-div" id="bank-account-options">
+				<div className="bank-app-div" id="bank-account-options">
 					<button className="bank-app-buttons" id="bank-account-sendMoney-button" type="button" onClick={() => this.isOverlayOpen(true)}>Send Money</button>
 					<button className="bank-app-buttons" id="bank-account-sendMoney-button" style={{ marginTop: "10px" }} type="button" onClick={() => this.isOverlayOpen2(true)}>Deposit Cheque</button>
 				</div>
@@ -543,9 +613,10 @@ export default class BankAccountOverview extends Component {
 
 					<br /><br />
 
-					{/* <AddBankAccountOverlay open = {isOpen} onClose = {() => setIsOpen(false)} accountAdded = {determineAccountToOpen}/> */}
 					<SendMoneyToUserOverlay open={this.state.isOpen} onClose={() => this.isOverlayOpen(false)} sendMoney={this.sendMoneyToUser} />
 					<SendChequeToUserOverlay open={this.state.isOpen2} onClose={() => this.isOverlayOpen2(false)} />
+					<ViewTransactionsOverlay open={this.state.isTransOverlayOpen} onClose={() => this.isTransOverlayOpen(false, "")} email = {this.state.user.email} accType = {this.state.viewTransAccountType} accountTrans = {this.state.transactions} showBaseAmount = {Number(5)}/>
+
 					<div className="bank-app-div" id="bank-accounts-owned-middle">
 						<h2 className="bank-account-heading">Bank Accounts</h2>
 
@@ -558,7 +629,7 @@ export default class BankAccountOverview extends Component {
 							<p className="bank-account-prefab-balance" id="bank-account-balance-prefab01"> ${this.findAccountBalance("savings")}</p>
 						</div>
 
-						<div>
+						<div className = "bank-account-prefabs">
 							<form onSubmit={this.updateDepositForSavingsAccount}>
 								<label>Deposit</label>
 								<input type="number" name="deposit-amount" min='10' max='10000' placeholder='$10' />
@@ -570,6 +641,8 @@ export default class BankAccountOverview extends Component {
 								<input type="number" name="withdraw-amount" min='10' max='10000' placeholder='$10' />
 								<input type="submit" value="Submit" />
 							</form>
+
+							<button className = "bank-app-buttons" id = "bank-account-transactionButton" onClick={() => this.isTransOverlayOpen(true, "savings")}>Transactions</button>
 						</div>
 						{/* <form onSubmit={this.depositChequeForSavingsAccount}>
 							<label>Deposit a cheque</label>
@@ -586,7 +659,7 @@ export default class BankAccountOverview extends Component {
 	 <button className = {addBankAccountButtonStyle} id = "bank-account-create-new-account-button" type = "button" onClick = {() => setIsOpen(true)}> Add New Account</button>
 	 </div> */}
 						<br />
-						<div className="dropdown">
+						{/* <div className="dropdown">
 
 							<button className="dropbtn">View Statements</button>
 							<div className="dropdown-content">
@@ -603,7 +676,7 @@ export default class BankAccountOverview extends Component {
 								<a href="/statementDecember2022">December 2022</a>
 								<a href="/statementJanuary2023">January 2023</a>
 							</div>
-						</div>
+						</div> */}
 
 						<br /><br />
 
@@ -614,7 +687,7 @@ export default class BankAccountOverview extends Component {
 							<p className="bank-account-prefab-balance" id="bank-account-balance-prefab02"> ${this.findAccountBalance("chequings")} </p>
 						</div>
 
-						<div>
+						<div className = "bank-account-prefabs">
 							<form onSubmit={this.updateDepositForchequingAccount}>
 								<label>Deposit</label>
 								<input type="number" name="deposit-amount" min='10' max='10000' placeholder='$10' />
@@ -626,6 +699,8 @@ export default class BankAccountOverview extends Component {
 								<input type="number" name="withdraw-amount" min='10' max='10000' placeholder='$10' />
 								<input type="submit" value="Submit" />
 							</form>
+
+							<button className = "bank-app-buttons" id = "bank-account-transactionButton" onClick={() => this.isTransOverlayOpen(true, "chequings")}>Transactions</button>
 						</div>
 
 						{/* <div>
@@ -639,7 +714,7 @@ export default class BankAccountOverview extends Component {
 						</div> */}
 
 						<br />
-						<div className="dropdown">
+						{/* <div className="dropdown">
 							<button className="dropbtn">View Statements</button>
 
 							<div className="dropdown-content">
@@ -656,7 +731,7 @@ export default class BankAccountOverview extends Component {
 								<a href="/statement2December2022">December 2022</a>
 								<a href="/statement2January2023">January 2023</a>
 							</div>
-						</div>
+						</div> */}
 
 						<br /><br />
 						<div className="bank-account-balance-total">
@@ -687,6 +762,7 @@ export default class BankAccountOverview extends Component {
 								<input type="number" name="withdrawAmount" min='1' max='10000' placeholder='$1' />
 								<input type="submit" value="Submit" />
 							</form>
+							<button className = "bank-app-buttons" id = "bank-account-transactionButton" onClick={() => this.isTransOverlayOpen(true, "credit-card")}>Transactions</button>
 						</div>
 
 						<div className="bank-account-create-new">

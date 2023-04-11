@@ -23,6 +23,10 @@
 	z-index: 1000;
 	font-family:"Playfair Display", serif; 
 }
+.hidden
+{
+	display: none;
+}
 
 #overlayButton-openAccount
 {
@@ -33,12 +37,12 @@
 
 #overlayButton-exit
 {
-	display: inline-block;
-	position: relative;
+	/* display: inline-block; */
+	/* position: relative; */
 	box-shadow: 0px 0px 14px -7px #eb5151;
 	background-image: linear-gradient(45deg, #e71414 0%, #eb5151  51%, #e71414  100%);
-	top: 20px;
-	left: 50px;
+	/* top: 20px;
+	left: 50px; */
 }
 
  /* The container must be positioned relative: */
@@ -62,6 +66,16 @@
 	user-select: none;
 	-webkit-user-select: none;
 	touch-action: manipulation;
+}
+
+#table-transaction-withdraw-amount
+{
+	color: red;
+}
+
+#table-transaction-deposit-amount
+{
+	color: green;
 }
 
 .bank-account-dropdown-option
