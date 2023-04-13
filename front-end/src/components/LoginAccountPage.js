@@ -71,7 +71,7 @@ const LoginPage = () => {
 				{
 					'Content-Type': 'application/json',
 				},
-			body:JSON.stringify({email,password})
+			body:JSON.stringify({email,password,register:false})
 		})
 		const json=await response.json();
 		if(json.success){
