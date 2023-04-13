@@ -129,7 +129,7 @@ export default class RegisterPage extends Component {
 		{
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ email: this.state.email })
+		body: JSON.stringify({ email: this.state.email ,register:true})
 	})
 	const json = await response.json();
 	if (json.success) {
