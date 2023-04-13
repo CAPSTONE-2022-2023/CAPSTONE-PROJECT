@@ -71,7 +71,7 @@ const LoginPage = () => {
 				{
 					'Content-Type': 'application/json',
 				},
-			body:JSON.stringify({email})
+			body:JSON.stringify({email,password})
 		})
 		const json=await response.json();
 		if(json.success){
@@ -79,7 +79,7 @@ const LoginPage = () => {
 			setdisotp(true)
 			setotptoken(json.token)
 		}else{
-			alert('something went wrong')
+			alert('Error! Invalid email address and/or password.')
 			setdisotp(false)
 		}
 	}

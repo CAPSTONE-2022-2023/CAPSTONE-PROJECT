@@ -50,6 +50,14 @@ router.route('/').post(async (req, res) => {
 router.route('/otp').post(async (req, res) => {
     try {
         console.log("here")
+        const email = req.body.email;
+        const password = req.body.password;
+        // Wait until a user that matches the email/password provided is found.
+        const user = await User.findOne({ email: email, password: password });
+        if(!user){
+         res.status(405).json({ success: false, user: false });
+         return
+        }
         const otp = otpGenerator.generate(6, { specialChars: false, upperCaseAlphabets: false, lowerCaseAlphabets: false });
         sendotp(otp, req.body.email)
         const token = jwt.sign({ otp }, 'moiz2194', { expiresIn: '1m' });
