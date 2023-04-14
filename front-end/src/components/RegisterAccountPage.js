@@ -116,7 +116,26 @@ export default class RegisterPage extends Component {
 	}
 
 	async sendotp() {
-		if (this.state.password.length < 8) {
+		//check to see if all form fields are filled out and valid
+		if (this.state.firstName === "") {
+			alert('First Name is required')
+		}
+		else if (this.state.lastName === "") {
+			alert('Last Name is required')
+		}
+		else if (this.state.email === "") {
+			alert('Email is required')
+		}
+		else if (this.state.email.indexOf("@") === -1) {
+			alert('Email is not in correct format')
+		}
+		else if (this.state.password === "") {
+			alert('Password is required')
+		}
+		else if (this.state.confirmPassword === "") {
+			alert('Confirm Password is required')
+		}
+		else if (this.state.password.length < 8) {
 			alert('Password length should be greater than 8')
 		}
 		else if (this.state.password !== this.state.confirmPassword) {

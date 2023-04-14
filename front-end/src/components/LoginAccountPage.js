@@ -64,6 +64,7 @@ const LoginPage = () => {
 			navigate("/login");
 		}
 	}
+
 	const sendotp=async()=>{
 		const response=await fetch('http://localhost:5000/login/otp',{
 			method:"post",
@@ -73,12 +74,19 @@ const LoginPage = () => {
 				},
 			body:JSON.stringify({email,password,register:false})
 		})
+
 		const json=await response.json();
-		if(json.success){
+		if (email === "") {
+			alert('Email is required')
+		}
+		else if (password === "") {
+			alert('Password is required')
+		}
+		else if(json.success){
 			alert('otp sent')
 			setdisotp(true)
 			setotptoken(json.token)
-		}else{
+		}else {
 			alert('Error! Invalid email address and/or password.')
 			setdisotp(false)
 		}
