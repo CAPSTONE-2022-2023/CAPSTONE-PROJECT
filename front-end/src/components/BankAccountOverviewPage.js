@@ -9,6 +9,7 @@ import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
 import '../css/BankAccountOverview.css';
+import '../css/LoginPage.css';
 
 const validator = require('validator');
 
@@ -49,8 +50,7 @@ export default class BankAccountOverview extends Component {
 
 		this.updateUserInDatabase = this.updateUserInDatabase.bind(this);
 
-		this.depositChequeForSavingsAccount = this.depositChequeForSavingsAccount.bind(this);
-		this.depositChequeForChequingAccount = this.depositChequeForChequingAccount.bind(this);
+		this.depositCheque = this.depositCheque.bind(this);
 		this.getAccountTransactions = this.getTransactions.bind(this);
 		this.postSelectAccountTransactions = this.postSelectAccountTransactions.bind(this);
 
@@ -518,56 +518,118 @@ export default class BankAccountOverview extends Component {
 		this.updateUserInDatabase();
 	}
 
+	async depositCheque(localFirstName, localLastName, localChequeId, localPage, localAmount, localAccountType)
+	{
+		
+		// firstName, lastName, chequeID, page, amount, accountType
+		const dataToSend =
+		{
+			firstName: String(localFirstName),
+			lastName: String(localLastName),
+			chequeId: String(localChequeId),
+			accountType: String(localAccountType),
+			page: Number(localPage),
+			amount: Number(localAmount)
+		};
+
+		await axios.post("http://localhost:5000/bank/depositcheque", dataToSend, {headers: {token: localStorage.getItem('token')}})
+		.then(() => 
+		{
+			this.postSelectAccountTransactions(this.state.user.email, localAccountType, 'cheque deposit', false, localAmount);
+			alert("Cheque successfully deposited!")
+			
+			// window.location.reload()
+			
+	// 	// 	this.postSelectAccountTransactions(response.data.user.email, 'chequings', 'cheque', true, depositAmount);
+		})
+		.catch((err) => alert(err.response.data.message));
+		// axios.post(`http://localhost:5000/bank/sendMoney/${this.state.user.email}`, dataToSend)
+		// 	.then(() => {
+		// 		alert("You have successfully sent $" + value + " to " + recipientEmail);
+		// 		window.location = '/bankAccountOverview';
+
+		// 	}
+		// 	).catch((err) => alert("Error! No user with that email can be found.\n" + err));
+			// try 
+			// {
+			//     const response = axios.post('http://localhost:5000/bank/depositcheque', 
+			// 	{
+			//         firstName: localFirstName,
+			//         lastName: localLastName,
+			//         localChequeId,
+			//         localAccountType,
+			//         localPage,
+			//         localAmount
+			//     }, 
+			// 	{
+			//         headers: 
+			// 		{
+			//             token: localStorage.getItem('token')
+			//         }
+			//     });
+								  
+			//     if (response.data.success === true) 
+			// 	{
+			//         alert(response.data.message);
+			//         window.location.reload()
+			//     }
+			// } 
+			// catch (error) 
+			// {
+			//     console.log(error)
+			//     alert(error.response.data.message);
+			// }								  
+	}
 	// This function will call the `/transfer` endpoint
 	// and transfer the amount from the source account to the destination account
 	// and given the accountType, it will find the account ID
-	depositChequeForSavingsAccount(e) {
-		e.preventDefault();
-		const form = e.target;
-		const formData = Object.fromEntries(new FormData(form));
+	// depositChequeForSavingsAccount(e) {
+	// 	// e.preventDefault();
+	// 	// const form = e.target;
+	// 	// const formData = Object.fromEntries(new FormData(form));
 
-		form.reset();
+	// 	// form.reset();
 
-		const account = this.findAccountID("savings");
-		const depositAmount = formData['deposit-amount'];
-		const chequeId = formData['cheque-id'];
+	// 	// const account = this.findAccountID("savings");
+	// 	// const depositAmount = formData['deposit-amount'];
+	// 	// const chequeId = formData['cheque-id'];
 
-		axios.post('http://localhost:5000/register/transfer', {
-			chequeId: chequeId,
-			accountId: account,
-			amount: +depositAmount
-		}).then((response) => {
-			// TODO: UPDATE THE USER STATE
-			this.setState({ user: { ...this.state.user, ...response.data.user } });
-			this.postSelectAccountTransactions(this.state.user.email, 'savings', 'cheque', false, depositAmount);
-			this.postSelectAccountTransactions(response.data.user.email, 'savings', 'cheque', true, depositAmount);
-		});
-
-		
-	}
-
-	depositChequeForChequingAccount(e) {
-		e.preventDefault();
-		const form = e.target;
-		const formData = Object.fromEntries(new FormData(form));
-
-		form.reset();
-
-		const account = this.findAccountID("chequings");
-		const depositAmount = formData['deposit-amount'];
-		const chequeId = formData['cheque-id'];
+	// 	// axios.post('http://localhost:5000/register/transfer', {
+	// 	// 	chequeId: chequeId,
+	// 	// 	accountId: account,
+	// 	// 	amount: +depositAmount
+	// 	// }).then((response) => {
+	// 	// 	// TODO: UPDATE THE USER STATE
+	// 	// 	this.setState({ user: { ...this.state.user, ...response.data.user } });
+	// 	// 	this.postSelectAccountTransactions(this.state.user.email, 'savings', 'cheque', false, depositAmount);
+	// 	// 	this.postSelectAccountTransactions(response.data.user.email, 'savings', 'cheque', true, depositAmount);
+	// 	// });
 
 		
-		axios.post('http://localhost:5000/register/transfer', {
-			chequeId: chequeId,
-			accountId: account,
-			amount: +depositAmount
-		}).then((response) => {
-			this.setState({ user: { ...this.state.user, ...response.data.user } });
-			this.postSelectAccountTransactions(this.state.user.email, 'chequings', 'cheque', false, depositAmount);
-			this.postSelectAccountTransactions(response.data.user.email, 'chequings', 'cheque', true, depositAmount);
-		});
-	}
+	// }
+
+	// depositChequeForChequingAccount(e) {
+	// 	// e.preventDefault();
+	// 	// const form = e.target;
+	// 	// const formData = Object.fromEntries(new FormData(form));
+
+	// 	// form.reset();
+
+	// 	// const account = this.findAccountID("chequings");
+	// 	// const depositAmount = formData['deposit-amount'];
+	// 	// const chequeId = formData['cheque-id'];
+
+		
+	// 	// axios.post('http://localhost:5000/register/transfer', {
+	// 	// 	chequeId: chequeId,
+	// 	// 	accountId: account,
+	// 	// 	amount: +depositAmount
+	// 	// }).then((response) => {
+	// 	// 	this.setState({ user: { ...this.state.user, ...response.data.user } });
+	// 	// 	this.postSelectAccountTransactions(this.state.user.email, 'chequings', 'cheque', false, depositAmount);
+	// 	// 	this.postSelectAccountTransactions(response.data.user.email, 'chequings', 'cheque', true, depositAmount);
+	// 	// });
+	// }
 
 	calculateCreditCardAccountTotal() {
 		// Get the right account
@@ -614,7 +676,7 @@ export default class BankAccountOverview extends Component {
 					<br /><br />
 
 					<SendMoneyToUserOverlay open={this.state.isOpen} onClose={() => this.isOverlayOpen(false)} sendMoney={this.sendMoneyToUser} />
-					<SendChequeToUserOverlay open={this.state.isOpen2} onClose={() => this.isOverlayOpen2(false)} />
+					<SendChequeToUserOverlay open={this.state.isOpen2} onClose={() => this.isOverlayOpen2(false)} sendCheque = {this.depositCheque}/>
 					<ViewTransactionsOverlay open={this.state.isTransOverlayOpen} onClose={() => this.isTransOverlayOpen(false, "")} email = {this.state.user.email} accType = {this.state.viewTransAccountType} accountTrans = {this.state.transactions} showBaseAmount = {Number(5)}/>
 
 					<div className="bank-app-div" id="bank-accounts-owned-middle">
@@ -631,25 +693,22 @@ export default class BankAccountOverview extends Component {
 
 						<div className = "bank-account-prefabs">
 							<form onSubmit={this.updateDepositForSavingsAccount}>
-								<label>Deposit</label>
-								<input type="number" name="deposit-amount" min='10' max='10000' placeholder='$10' />
-								<input type="submit" value="Submit" />
+								<div className="login-input-container" id = "depositMoney-inputField">
+									<input type="number" name = "deposit-amount" min = "10" max = "10000"/>
+									<label id="input-container-label" htmlFor="accountDeposit">Deposit</label>
+								</div>
 							</form>
 
 							<form onSubmit={this.updateWithdrawForSavingsAccount}>
-								<label>Withdraw</label>
-								<input type="number" name="withdraw-amount" min='10' max='10000' placeholder='$10' />
-								<input type="submit" value="Submit" />
+								<div className="login-input-container" id = "withdrawMoney-inputField">
+									<input type="number" name = "withdraw-amount" min = "10" max = "10000"/>
+									<label id="input-container-label" htmlFor="userfirstName">Withdraw</label>
+								</div>
 							</form>
 
 							<button className = "bank-app-buttons" id = "bank-account-transactionButton" onClick={() => this.isTransOverlayOpen(true, "savings")}>Transactions</button>
 						</div>
-						{/* <form onSubmit={this.depositChequeForSavingsAccount}>
-							<label>Deposit a cheque</label>
-							<input type="text" name="cheque-id" placeholder='Cheque ID' />
-							<input type="number" name="deposit-amount" min='10' max='10000' placeholder='$' />
-							<input type="submit" value="Submit" />
-						</form> */}
+
 
 						<div>
 
@@ -689,15 +748,17 @@ export default class BankAccountOverview extends Component {
 
 						<div className = "bank-account-prefabs">
 							<form onSubmit={this.updateDepositForchequingAccount}>
-								<label>Deposit</label>
-								<input type="number" name="deposit-amount" min='10' max='10000' placeholder='$10' />
-								<input type="submit" value="Submit" />
+								<div className="login-input-container" id = "depositMoney-inputField">
+									<input type="number" name = "deposit-amount" min = "10" max = "10000"/>
+									<label id="input-container-label" htmlFor="accountDeposit">Deposit</label>
+								</div>
 							</form>
 
 							<form onSubmit={this.updateWithdrawForchequingAccount}>
-								<label>Withdraw</label>
-								<input type="number" name="withdraw-amount" min='10' max='10000' placeholder='$10' />
-								<input type="submit" value="Submit" />
+								<div className="login-input-container" id = "withdrawMoney-inputField">
+									<input type="number" name = "withdraw-amount" min = "10" max = "10000"/>
+									<label id="input-container-label" htmlFor="userfirstName">Withdraw</label>
+								</div>
 							</form>
 
 							<button className = "bank-app-buttons" id = "bank-account-transactionButton" onClick={() => this.isTransOverlayOpen(true, "chequings")}>Transactions</button>
@@ -752,6 +813,19 @@ export default class BankAccountOverview extends Component {
 
 						<div className={creditCardAccountStyle}>
 							<form onSubmit={this.updateDepositForCreditCardAccount}>
+								<div className="login-input-container" id = "depositMoney-inputField">
+									<input type="number" name = "depositAmount" min = "10" max = "10000"/>
+									<label id="input-container-label" htmlFor="accountDeposit">Charge</label>
+								</div>
+							</form>
+
+							<form onSubmit={this.updateWithdrawForCreditCardAccount}>
+								<div className="login-input-container" id = "withdrawMoney-inputField">
+									<input type="number" name = "withdrawAmount" min = "10" max = "10000"/>
+									<label id="input-container-label" htmlFor="userfirstName">Pay Off</label>
+								</div>
+							</form>
+							{/* <form onSubmit={this.updateDepositForCreditCardAccount}>
 								<label>Charge</label>
 								<input type="number" name="depositAmount" min='1' max='10000' placeholder='$1' />
 								<input type="submit" value="Submit" />
@@ -761,7 +835,7 @@ export default class BankAccountOverview extends Component {
 								<label>Pay Off</label>
 								<input type="number" name="withdrawAmount" min='1' max='10000' placeholder='$1' />
 								<input type="submit" value="Submit" />
-							</form>
+							</form> */}
 							<button className = "bank-app-buttons" id = "bank-account-transactionButton" onClick={() => this.isTransOverlayOpen(true, "credit-card")}>Transactions</button>
 						</div>
 

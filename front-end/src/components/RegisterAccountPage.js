@@ -60,11 +60,7 @@ export default class RegisterPage extends Component {
 	}
 	async onSubmit(e) {
 		e.preventDefault();
-		console.log(this.state.password.length)
-
 		
-
-
 		const user =
 		{
 			firstName: this.state.firstName,
