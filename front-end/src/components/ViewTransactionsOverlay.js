@@ -6,6 +6,7 @@ import '../css/BankAccountOverview.css';
 export default function ViewTransactions({open, onClose, email, accType, accountTrans, showBaseAmount})
 {
     const [showAmount, setShowAmount] = useState(showBaseAmount);
+    const dayjs = require('dayjs')
 
     if (!open) return null;
 
@@ -89,7 +90,7 @@ export default function ViewTransactions({open, onClose, email, accType, account
 
                                     return(
                                         <tr key = {trans.date}>
-                                            <td>{trans.date}</td>
+                                            <td>{dayjs(trans.date).format('YYYY/MM/DD')}</td>
                                             <td>{trans.transType.toUpperCase()}</td>
                                             <td id = {amountStyle} >{amountText}</td>
                                         </tr>  
